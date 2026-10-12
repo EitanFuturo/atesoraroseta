@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Build guide — atesoraroseta</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="/_blob/820bdd10bade960af13d0d291b9208bd">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&amp;family=Jost:ital,wght@0,100..900;1,100..900&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="page" style="box-sizing: border-box; width: 1440px; padding: 96px 96px 120px; display: flex; flex-direction: column; gap: 80px; background: #222221; color: #ECEAE6; font-family: 'Jost', Futura, 'Century Gothic', ui-sans-serif, system-ui, sans-serif">
+
+<header style="display: flex; flex-direction: column; gap: 18px; max-width: 820px">
+<span class="label">atesoraroseta · Build guide</span>
+<h1 style="margin: 0; font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-weight: 400; font-size: 64px; line-height: 1.04; letter-spacing: -0.01em">How to build this site</h1>
+<p style="margin: 0; font-size: 16.5px; line-height: 1.7; color: #A8A59F; text-wrap: pretty">Everything a developer, or a Claude Code agent, needs to turn these artboards into the real site. Layout values are inline in each artboard. Tokens, shared text styles, hover and focus states and the responsive overrides live in site.css, the stylesheet every page links, ready to reuse.</p>
+</header>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 80px 96px; align-items: start">
+
+<section style="display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<h2 style="margin: 0; font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-weight: 400; font-size: 32px; line-height: 1.1">Color</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.65; color: #A8A59F; text-wrap: pretty">A plain graphite wall. One accent, ochre, taken from the work; the art carries every other colour.</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px 20px">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="height: 88px; border-radius: 2px; background: #222221; box-shadow: inset 0 0 0 1px rgba(236, 234, 230, 0.16)"></div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 14px; line-height: 20px; font-weight: 500">Ground</span>
+<span style="font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 12px; line-height: 18px; color: #A8A59F">#222221</span>
+<span style="font-size: 12.5px; line-height: 18px; color: #A8A59F">Page background; placeholders #2A2A29</span>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="height: 88px; border-radius: 2px; background: #ECEAE6"></div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 14px; line-height: 20px; font-weight: 500">Ink</span>
+<span style="font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 12px; line-height: 18px; color: #A8A59F">#ECEAE6</span>
+<span style="font-size: 12.5px; line-height: 18px; color: #A8A59F">Name, titles, body, current page · 13:1</span>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="height: 88px; border-radius: 2px; background: #A8A59F"></div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 14px; line-height: 20px; font-weight: 500">Ink 2</span>
+<span style="font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 12px; line-height: 18px; color: #A8A59F">#A8A59F</span>
+<span style="font-size: 12.5px; line-height: 18px; color: #A8A59F">Menu, labels, secondary copy · 6.5:1</span>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="height: 88px; border-radius: 2px; background: #222221; display: flex; flex-direction: column; justify-content: center; gap: 14px; box-sizing: border-box; padding-inline: 16px; box-shadow: inset 0 0 0 1px rgba(236, 234, 230, 0.16)">
+<div style="height: 1px; background: rgba(236, 234, 230, 0.12)"></div>
+<div style="height: 1px; background: rgba(236, 234, 230, 0.12)"></div>
+<div style="height: 1px; background: rgba(236, 234, 230, 0.30)"></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 14px; line-height: 20px; font-weight: 500">Line</span>
+<span style="font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 12px; line-height: 18px; color: #A8A59F">rgba(236, 234, 230, .12)</span>
+<span style="font-size: 12.5px; line-height: 18px; color: #A8A59F">Hairlines; link underlines at .30</span>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="position: relative; height: 88px; border-radius: 2px; overflow: hidden">
+<img src="/_blob/9295ffaf1120614e6a5f7db8031aa6d9" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover">
+<div style="position: absolute; top: 14px; right: 14px; bottom: 14px; left: 38%; border-radius: 2px; background: rgba(34, 34, 33, 0.84); box-shadow: inset 0 0 0 1px rgba(236, 234, 230, 0.08); backdrop-filter: blur(14px) saturate(1.2)"></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 14px; line-height: 20px; font-weight: 500">Veil</span>
+<span style="font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 12px; line-height: 18px; color: #A8A59F">rgba(34, 34, 33, .84)</span>
+<span style="font-size: 12.5px; line-height: 18px; color: #A8A59F">Hover label, blur 14px; meta text #C9C6C0</span>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="height: 88px; border-radius: 2px; background: #D9A55B"></div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 14px; line-height: 20px; font-weight: 500">Ochre</span>
+<span style="font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 12px; line-height: 18px; color: #A8A59F">#D9A55B</span>
+<span style="font-size: 12.5px; line-height: 18px; color: #A8A59F">Focus ring, link hover, selection · 7.3:1</span>
+</div>
+</div>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<h2 style="margin: 0; font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-weight: 400; font-size: 32px; line-height: 1.1">Type</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.65; color: #A8A59F; text-wrap: pretty">Bodoni Moda for the name, in lower case, and for artwork titles, always italic as in writing about art. Jost for everything else; menus and labels in spaced capitals.</p>
+</div>
+<div style="display: flex; flex-direction: column; border-bottom: 1px solid rgba(236, 234, 230, 0.12)">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 24px; padding-block: 14px; border-top: 1px solid rgba(236, 234, 230, 0.12)">
+<span style="font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-size: 34px; line-height: 1; letter-spacing: -0.005em">atesoraroseta</span>
+<span style="font-size: 12.5px; line-height: 18px; color: #A8A59F; text-align: right">Wordmark · Bodoni Moda 34/34 · 27 on phones</span>
+</div>
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 24px; padding-block: 14px; border-top: 1px solid rgba(236, 234, 230, 0.12)">
+<span style="font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-style: italic; font-size: 50px; line-height: 1.08">Título</span>
+<span style="font-size: 12.5px; line-height: 18px; color: #A8A59F; text-align: right">Artwork page title · Bodoni Moda italic 50/54 · 34 on phones</span>
+</div>
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 24px; padding-block: 14px; border-top: 1px solid rgba(236, 234, 230, 0.12)">
+<span style="font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-style: italic; font-size: 21px; line-height: 1.15">Título de la obra</span>
+<span style="font-size: 12.5px; line-height: 18px; color: #A8A59F; text-align: right">Hover label title · Bodoni Moda italic 21/24</span>
+</div>
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 24px; padding-block: 14px; border-top: 1px solid rgba(236, 234, 230, 0.12)">
+<span style="font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-size: 38px; line-height: 1.25">Los recojo</span>
+<span style="font-size: 12.5px; line-height: 18px; color: #A8A59F; text-align: right">Sobre mí lead · Bodoni Moda 38/47 · 28 on phones; Contacto headline 96/96</span>
+</div>
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 24px; padding-block: 14px; border-top: 1px solid rgba(236, 234, 230, 0.12)">
+<span style="font-size: 12px; line-height: 20px; font-weight: 450; letter-spacing: 0.18em; text-transform: uppercase">Torn Posters</span>
+<span style="font-size: 12.5px; line-height: 18px; color: #A8A59F; text-align: right">Menu · Jost 450, 12/20, +0.18em, caps · +0.12em on phones</span>
+</div>
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 24px; padding-block: 14px; border-top: 1px solid rgba(236, 234, 230, 0.12)">
+<span style="font-size: 16px; line-height: 28px">Body copy for Sobre mí</span>
+<span style="font-size: 12.5px; line-height: 18px; color: #A8A59F; text-align: right">Body · Jost 400, 16/28</span>
+</div>
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 24px; padding-block: 14px; border-top: 1px solid rgba(236, 234, 230, 0.12)">
+<span style="font-size: 12.5px; line-height: 18px; letter-spacing: 0.02em; color: #C9C6C0">[Año] · Carteles arrancados</span>
+<span style="font-size: 12.5px; line-height: 18px; color: #A8A59F; text-align: right">Meta · Jost 400, 12.5/18, +0.02em</span>
+</div>
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 24px; padding-block: 14px; border-top: 1px solid rgba(236, 234, 230, 0.12)">
+<span class="label">Detalles</span>
+<span style="font-size: 12.5px; line-height: 18px; color: #A8A59F; text-align: right">Label · Jost 500, 11/14, +0.22em, caps</span>
+</div>
+</div>
+<p style="margin: 0; font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 12px; line-height: 19px; color: #A8A59F; overflow-wrap: anywhere">fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&amp;family=Jost:ital,wght@0,100..900;1,100..900&amp;display=swap</p>
+</section>
+
+</div>
+
+<section style="display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<h2 style="margin: 0; font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-weight: 400; font-size: 32px; line-height: 1.1">Layout</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.65; color: #A8A59F">Content sits in a 1440 max-width container. Grids are intrinsic (auto-fill), so they reflow without extra breakpoints.</p>
+</div>
+<div style="overflow-x: auto">
+<table style="width: 100%; border-collapse: collapse; font-size: 14px; line-height: 21px; text-align: left">
+<thead>
+<tr>
+<th scope="col" class="label" style="width: 18%; padding: 0 20px 12px 0"></th>
+<th scope="col" class="label" style="padding: 0 20px 12px 0">Phone · up to 640</th>
+<th scope="col" class="label" style="padding: 0 20px 12px 0">Tablet · 641–1023</th>
+<th scope="col" class="label" style="padding: 0 0 12px 0">Desktop · 1024 and up</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th scope="row" style="padding: 14px 20px 14px 0; border-top: 1px solid rgba(236, 234, 230, 0.12); font-weight: 500; vertical-align: top">Page padding</th>
+<td style="padding: 14px 20px 14px 0; border-top: 1px solid rgba(236, 234, 230, 0.12); vertical-align: top">20</td>
+<td style="padding: 14px 20px 14px 0; border-top: 1px solid rgba(236, 234, 230, 0.12); vertical-align: top">4.45vw (clamp 20–64)</td>
+<td style="padding: 14px 0; border-top: 1px solid rgba(236, 234, 230, 0.12); vertical-align: top">64, content up to 1312</td>
+</tr>
+<tr>
+<th scope="row" style="padding: 14px 20px 14px 0; border-top: 1px solid rgba(236, 234, 230, 0.12); font-weight: 500; vertical-align: top">Header</th>
+<td style="padding: 14px 20px 14px 0; border-top: 1px solid rgba(236, 234, 230, 0.12); vertical-align: top">Name, then the four menu items on one row below; no hamburger</td>
+<td style="padding: 14px 20px 14px 0; border-top: 1px solid rgba(236, 234, 230, 0.12); vertical-align: top">One row</td>
+<td style="padding: 14px 0; border-top: 1px solid rgba(236, 234, 230, 0.12); vertical-align: top">One row, name left, menu right; not sticky</td>
+</tr>
+<tr>
+<th scope="row" style="padding: 14px 20px 14px 0; border-top: 1px solid rgba(236, 234, 230, 0.12); font-weight: 500; vertical-align: top">Obra grid</th>
+<td style="padding: 14px 20px 14px 0; border-top: 1px solid rgba(236, 234, 230, 0.12); vertical-align: top">1 column, each work full width at its own ratio, gap 36</td>
+<td style="padding: 14px 20px 14px 0; border-top: 1px solid rgba(236, 234, 230, 0.12); vertical-align: top">2 columns of 4:5 cells</td>
+<td style="padding: 14px 0; border-top: 1px solid rgba(236, 234, 230, 0.12); vertical-align: top">3 columns of 4:5 cells, gap 56 (min track 300)</td>
+</tr>
+<tr>
+<th scope="row" style="padding: 14px 20px 14px 0; border-top: 1px solid rgba(236, 234, 230, 0.12); font-weight: 500; vertical-align: top">Torn Posters</th>
+<td style="padding: 14px 20px 14px 0; border-top: 1px solid rgba(236, 234, 230, 0.12); vertical-align: top">2 columns of squares, gap 12</td>
+<td style="padding: 14px 20px 14px 0; border-top: 1px solid rgba(236, 234, 230, 0.12); vertical-align: top">3 columns, gap 20</td>
+<td style="padding: 14px 0; border-top: 1px solid rgba(236, 234, 230, 0.12); vertical-align: top">4 columns, gap 20; photos cropped square with object-fit: cover</td>
+</tr>
+<tr>
+<th scope="row" style="padding: 14px 20px 14px 0; border-top: 1px solid rgba(236, 234, 230, 0.12); font-weight: 500; vertical-align: top">Artwork page</th>
+<td style="padding: 14px 20px 14px 0; border-top: 1px solid rgba(236, 234, 230, 0.12); vertical-align: top">Image, then title and data, then details in 1 column</td>
+<td style="padding: 14px 20px 14px 0; border-top: 1px solid rgba(236, 234, 230, 0.12); vertical-align: top">Image, then text; details in 2 masonry columns</td>
+<td style="padding: 14px 0; border-top: 1px solid rgba(236, 234, 230, 0.12); vertical-align: top">Image up to 860 tall beside a 360 text column; details in 3 masonry columns, gap 24</td>
+</tr>
+<tr>
+<th scope="row" style="padding: 14px 20px 14px 0; border-top: 1px solid rgba(236, 234, 230, 0.12); border-bottom: 1px solid rgba(236, 234, 230, 0.12); font-weight: 500; vertical-align: top">Sobre mí · Contacto</th>
+<td style="padding: 14px 20px 14px 0; border-top: 1px solid rgba(236, 234, 230, 0.12); border-bottom: 1px solid rgba(236, 234, 230, 0.12); vertical-align: top">Portrait, then text</td>
+<td style="padding: 14px 20px 14px 0; border-top: 1px solid rgba(236, 234, 230, 0.12); border-bottom: 1px solid rgba(236, 234, 230, 0.12); vertical-align: top">Stacked</td>
+<td style="padding: 14px 0; border-top: 1px solid rgba(236, 234, 230, 0.12); border-bottom: 1px solid rgba(236, 234, 230, 0.12); vertical-align: top">Portrait (max 540) beside text (max 640) · Contacto text column max 920</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 80px 96px; align-items: start">
+
+<section style="display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<h2 style="margin: 0; font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-weight: 400; font-size: 32px; line-height: 1.1">Artwork tile</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.65; color: #A8A59F; text-wrap: pretty">Each work is contained in a 4:5 cell at its own proportions and centred, like works hung on a common line. The whole tile is one link to its page.</p>
+</div>
+<div style="display: flex; gap: 32px; align-items: flex-start">
+<div style="flex: 0 0 260px; height: 325px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; outline: 1px dashed rgba(236, 234, 230, 0.28); outline-offset: 0">
+<div style="position: relative; width: 244px; aspect-ratio: 1179 / 1571; transform: translateY(-6px)">
+<img src="/_blob/556e441e88187d6fc67e26d20eeeace6" alt="" style="display: block; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.28)) drop-shadow(0 34px 46px rgba(0, 0, 0, 0.56))">
+<div class="hover-label is-on" style="position: absolute; left: 14px; bottom: 14px; box-sizing: border-box; max-width: calc(100% - 28px); display: flex; flex-direction: column; gap: 4px; padding: 11px 14px 12px; border-radius: 2px">
+<span class="hover-title">[Título]</span>
+<span class="hover-meta">[Año] · Carteles arrancados</span>
+</div>
+</div>
+</div>
+<dl style="flex: 1 1 auto; min-width: 0; margin: 0; display: flex; flex-direction: column; gap: 14px; font-size: 13.5px; line-height: 20px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<dt style="font-weight: 500">Rest</dt>
+<dd style="margin: 0; color: #A8A59F">drop-shadow 0 2 3 / 30% + 0 18 30 / 42%, black</dd>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<dt style="font-weight: 500">Hover and keyboard focus</dt>
+<dd style="margin: 0; color: #A8A59F">Lifts 6px; shadow deepens to 0 4 6 / 28% + 0 34 46 / 56%; 700ms</dd>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<dt style="font-weight: 500">Label</dt>
+<dd style="margin: 0; color: #A8A59F">Smoked glass: veil, blur 14, inner hairline at 8%. Inset 14, padding 11/14/12, radius 2. Fades in (350ms) and rises 8px (450ms) after 60ms</dd>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<dt style="font-weight: 500">Why drop-shadow</dt>
+<dd style="margin: 0; color: #A8A59F">A filter shadow follows the alpha, so a cut-out of the torn paper casts a torn shadow; a plain photo still gets a soft rectangle</dd>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<dt style="font-weight: 500">Touch and reduced motion</dt>
+<dd style="margin: 0; color: #A8A59F">No hover on touch: no label, a tap opens the page. With reduced motion, nothing moves; opacity only</dd>
+</div>
+</dl>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<h2 style="margin: 0; font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-weight: 400; font-size: 32px; line-height: 1.1">States and motion</h2>
+<p style="margin: 0; font-size: 15px; line-height: 1.65; color: #A8A59F; text-wrap: pretty">One easing everywhere, slow enough to feel like paper being lifted, never bouncy.</p>
+</div>
+<dl style="margin: 0; display: flex; flex-direction: column; border-bottom: 1px solid rgba(236, 234, 230, 0.12); font-size: 14px; line-height: 21px">
+<div style="display: flex; gap: 24px; padding-block: 13px; border-top: 1px solid rgba(236, 234, 230, 0.12)">
+<dt style="flex: 0 0 150px; font-weight: 500">Easing</dt>
+<dd style="margin: 0; color: #A8A59F">cubic-bezier(.22, 1, .36, 1)</dd>
+</div>
+<div style="display: flex; gap: 24px; padding-block: 13px; border-top: 1px solid rgba(236, 234, 230, 0.12)">
+<dt style="flex: 0 0 150px; font-weight: 500">Durations</dt>
+<dd style="margin: 0; color: #A8A59F">Tile lift and shadow 700ms · label 350/450ms · photo tile 600ms · link colour 250ms</dd>
+</div>
+<div style="display: flex; gap: 24px; padding-block: 13px; border-top: 1px solid rgba(236, 234, 230, 0.12)">
+<dt style="flex: 0 0 150px; font-weight: 500">Menu</dt>
+<dd style="margin: 0; color: #A8A59F">Ink 2, hover Ink. Current page Ink with a 1px underline, offset 7. Order: Obra · Torn Posters · Sobre mí · Contacto. The name also links home</dd>
+</div>
+<div style="display: flex; gap: 24px; padding-block: 13px; border-top: 1px solid rgba(236, 234, 230, 0.12)">
+<dt style="flex: 0 0 150px; font-weight: 500">Text links</dt>
+<dd style="margin: 0; color: #A8A59F">Ink with a 1px underline at 30%; hover turns ochre</dd>
+</div>
+<div style="display: flex; gap: 24px; padding-block: 13px; border-top: 1px solid rgba(236, 234, 230, 0.12)">
+<dt style="flex: 0 0 150px; font-weight: 500">Focus</dt>
+<dd style="margin: 0; color: #A8A59F">2px ochre outline, offset 4; on tiles it rings the artwork at offset 10 and shows the label</dd>
+</div>
+<div style="display: flex; gap: 24px; padding-block: 13px; border-top: 1px solid rgba(236, 234, 230, 0.12)">
+<dt style="flex: 0 0 150px; font-weight: 500">Photo tiles</dt>
+<dd style="margin: 0; color: #A8A59F">Flat at rest; hover lifts 4px with a soft shadow and the same label (place, city · year)</dd>
+</div>
+<div style="display: flex; gap: 24px; padding-block: 13px; border-top: 1px solid rgba(236, 234, 230, 0.12)">
+<dt style="flex: 0 0 150px; font-weight: 500">Touch targets</dt>
+<dd style="margin: 0; color: #A8A59F">Menu items and text links are 44px tall</dd>
+</div>
+</dl>
+</section>
+
+</div>
+
+<section style="display: flex; flex-direction: column; gap: 28px">
+<h2 style="margin: 0; font-family: 'Bodoni Moda', 'Bodoni 72', Didot, Georgia, serif; font-weight: 400; font-size: 32px; line-height: 1.1">Routes and content</h2>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px 96px; align-items: start">
+<dl style="margin: 0; display: flex; flex-direction: column; border-bottom: 1px solid rgba(236, 234, 230, 0.12); font-size: 14px; line-height: 21px">
+<div style="display: flex; gap: 24px; padding-block: 13px; border-top: 1px solid rgba(236, 234, 230, 0.12)">
+<dt style="flex: 0 0 150px; font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 13px">/</dt>
+<dd style="margin: 0; color: #A8A59F">Obra, the home page: the artwork grid and nothing else</dd>
+</div>
+<div style="display: flex; gap: 24px; padding-block: 13px; border-top: 1px solid rgba(236, 234, 230, 0.12)">
+<dt style="flex: 0 0 150px; font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 13px">/obra/[slug]</dt>
+<dd style="margin: 0; color: #A8A59F">One artwork: image, title, year, medium, size, optional text, every detail photo, previous and next</dd>
+</div>
+<div style="display: flex; gap: 24px; padding-block: 13px; border-top: 1px solid rgba(236, 234, 230, 0.12)">
+<dt style="flex: 0 0 150px; font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 13px">/torn-posters</dt>
+<dd style="margin: 0; color: #A8A59F">Photos of the torn posters that inspired the work</dd>
+</div>
+<div style="display: flex; gap: 24px; padding-block: 13px; border-top: 1px solid rgba(236, 234, 230, 0.12)">
+<dt style="flex: 0 0 150px; font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 13px">/sobre-mi</dt>
+<dd style="margin: 0; color: #A8A59F">About the artist</dd>
+</div>
+<div style="display: flex; gap: 24px; padding-block: 13px; border-top: 1px solid rgba(236, 234, 230, 0.12)">
+<dt style="flex: 0 0 150px; font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 13px">/contacto</dt>
+<dd style="margin: 0; color: #A8A59F">Email as a mailto link, plus Instagram</dd>
+</div>
+</dl>
+<div style="display: flex; flex-direction: column; gap: 20px">
+<pre style="margin: 0; padding: 20px 22px; overflow-x: auto; background: #2A2A29; border-radius: 2px; font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 12.5px; line-height: 20px; color: #ECEAE6">Artwork  { slug, title, year, medium, size?, text?, order,
+           image:   { src, width, height, alt, cutout },
+           details: [ { src, width, height, alt } ] }
+Poster   { src, width, height, alt, place, city, year }
+Site     { email, instagram, bio, portrait? }</pre>
+<p style="margin: 0; font-size: 14px; line-height: 1.7; color: #A8A59F; text-wrap: pretty">Artworks: 2400px on the long edge, WebP or AVIF. Best cut out along the torn edge on a transparent background so the shadow follows the paper, as the sample piece is here; otherwise crop to the paper's edge. Detail and street photos: 2000px, any ratio. Always set width and height, and lazy-load below the first row.</p>
+</div>
+</div>
+</section>
+
+<section style="display: flex; gap: 24px; padding-top: 24px; border-top: 1px solid rgba(236, 234, 230, 0.12)">
+<h2 class="label" style="flex: 0 0 220px; margin: 0; line-height: 21px">Placeholders in this canvas</h2>
+<p style="margin: 0; max-width: 860px; font-size: 14px; line-height: 1.7; color: #A8A59F; text-wrap: pretty">Obra tile 01 and the artwork page use the sample piece (screenshot avatar retouched out, black background cut away); the detail photos are close-ups of it. Tiles 02–09 are crops of the same piece standing in for the rest of the series. Torn Posters tiles and the portrait are flat placeholders. Bracketed text, such as [Título de la obra], [Año], [soporte] and [tu-correo@dominio.com], is content still to be written. The Font options artboard records the type exploration; D · Fashion was chosen.</p>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":3400}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

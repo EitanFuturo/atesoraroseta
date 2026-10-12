@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Torn Posters en móvil — atesoraroseta</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="/_blob/820bdd10bade960af13d0d291b9208bd">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&amp;family=Jost:ital,wght@0,100..900;1,100..900&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div style="box-sizing: border-box; width: 390px; background: #222221; color: #ECEAE6; font-family: 'Jost', Futura, 'Century Gothic', ui-sans-serif, system-ui, sans-serif">
+<dc-import name="Torn-posters" show-hover-demo="{{showHoverDemo}}" hint-size="390px,1400px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1400}}'>
+class Component extends DCLogic {
+  renderVals() {
+    // Same page as the desktop artboard, rendered at phone width: no hover on touch.
+    return { showHoverDemo: false };
+  }
+}
+</script>
+</body>
+</html>
