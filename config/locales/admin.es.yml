@@ -168,6 +168,66 @@ es:
         up: "El detalle ha subido un puesto."
         down: "El detalle ha bajado un puesto."
 
+    torn_posters:
+      unnamed: "Foto sin lugar ni ciudad"
+      alt_missing: "Falta el texto alternativo: ahora se usa «%{current}»."
+      alt_missing_decorative: "Falta el texto alternativo: sin lugar ni ciudad, la foto se trata como decorativa."
+      index:
+        title: "Torn Posters"
+        intro: "Fotos de los carteles arrancados que inspiran la obra. En la web salen en este orden, y solo las publicadas."
+        upload:
+          heading: "Subir fotos"
+          label: "Fotos"
+          hint: "Puedes elegir muchas a la vez. Se añaden al principio de la lista, sin publicar, en el orden en que las eliges."
+          button: "Subir las fotos"
+        save: "Guardar cambios"
+        publish_all: "Marcar todas como publicadas"
+        columns:
+          photo: "Foto"
+          order: "Orden"
+          actions: "Acciones"
+        label_suffix: "de la foto %{number}"
+        name: "la foto %{number}"
+        low_resolution: "Imagen pequeña"
+        years_hint: "Año: un año (2024) o un periodo (2023–2024)."
+        alt_hint: "Texto alternativo: describe la foto para quien no puede verla. Si lo dejas vacío, se usan el lugar y la ciudad."
+        change_photo: "Cambiar la imagen"
+        destroy: "Eliminar"
+        destroy_confirm: "¿Eliminar la foto %{number}? No se puede deshacer."
+        empty: "Todavía no hay fotos."
+        error_summary: "No se ha guardado nada: corrige las fotos marcadas."
+        error_line: "Foto %{number}: %{message}"
+      edit:
+        title: "Foto: %{label}"
+        intro: "Aquí puedes cambiar la imagen de esta foto. Sus datos también se editan en la tabla de Torn Posters."
+        photo: "La foto"
+        details: "Datos"
+        published_hint: "Si está publicada, se ve en la web. Si no, no se ve en ninguna parte."
+        back: "Volver a Torn Posters"
+        destroy:
+          heading: "Eliminar la foto"
+          text: "Se borra la foto de la web y del panel. No se puede deshacer."
+          button: "Eliminar la foto"
+          confirm: "¿Eliminar esta foto? No se puede deshacer."
+      create:
+        none: "Elige al menos una foto para subir."
+        notice:
+          one: "Se ha subido 1 foto. Está sin publicar: revisa sus datos y publícala."
+          other: "Se han subido %{count} fotos. Están sin publicar: revisa sus datos y publícalas."
+        rejected:
+          one: "No se ha podido subir 1 archivo:"
+          other: "No se han podido subir %{count} archivos:"
+      bulk_update:
+        notice: "Cambios guardados."
+        published_all: "Cambios guardados. Todas las fotos están publicadas."
+      update:
+        notice: "Foto guardada."
+      destroy:
+        notice: "Foto eliminada."
+      move:
+        up: "La foto ha subido un puesto."
+        down: "La foto ha bajado un puesto."
+
   sessions:
     new:
       title: "Entrar"

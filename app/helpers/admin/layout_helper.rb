@@ -14,7 +14,8 @@ module Admin
     # The menu: [label, path, section] per entry. A section groups the controllers of one menu entry.
     def admin_nav_items
       [
-        [ Artwork.model_name.human(count: 2), admin_artworks_path, :artworks ]
+        [ Artwork.model_name.human(count: 2), admin_artworks_path, :artworks ],
+        [ t("admin.torn_posters.index.title"), admin_torn_posters_path, :torn_posters ]
       ]
     end
 

@@ -875,6 +875,139 @@ body.admin {
   }
 }
 
+/* Torn Posters: one form for the whole table --------------------------------------------------- */
+
+.bulk-form {
+  margin-top: 32px;
+}
+
+.bulk-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.bulk-table td {
+  vertical-align: top;
+}
+
+.admin .bulk-table input[type="text"] {
+  min-width: 7rem;
+  max-width: none;
+  padding: 6px 8px;
+}
+
+.admin .bulk-table input.input-short {
+  min-width: 6.5rem;
+}
+
+.bulk-table__photo .dimensions,
+.bulk-table__photo .warning {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.8rem;
+}
+
+.bulk-table__published input {
+  width: 22px;
+  height: 22px;
+  margin: 6px 0 0;
+}
+
+.bulk-table tr.is-invalid {
+  background: var(--admin-error-ground);
+}
+
+.bulk-table .warning {
+  font-size: 0.8rem;
+}
+
+/* In the table the column headers name the fields; the labels are for screen readers (and narrow screens). */
+.cell-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 1100px) {
+  .bulk-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .bulk-table,
+  .bulk-table tbody,
+  .bulk-table td {
+    display: block;
+  }
+
+  .bulk-table tr {
+    display: grid;
+    grid-template-columns: 112px repeat(2, minmax(0, 1fr));
+    gap: 10px 16px;
+    padding: 14px;
+    border-bottom: 1px solid var(--admin-line);
+  }
+
+  .bulk-table td {
+    padding: 0;
+    border: 0;
+  }
+
+  .bulk-table td.bulk-table__photo {
+    grid-row: span 4;
+  }
+
+  .bulk-table .cell-label {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+    white-space: normal;
+    display: block;
+    margin-bottom: 2px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .bulk-table .cell-label .visually-hidden {
+    position: absolute !important;
+  }
+
+  .bulk-table__published {
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .bulk-table__published input {
+    margin: 0;
+  }
+
+  .bulk-table .cell-label--inline {
+    display: inline;
+    margin: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .bulk-table tr {
+    grid-template-columns: 96px minmax(0, 1fr);
+  }
+
+  .bulk-table td.bulk-table__photo {
+    grid-row: span 7;
+  }
+}
+
 .empty-state {
   padding: 24px;
   color: var(--admin-ink-2);

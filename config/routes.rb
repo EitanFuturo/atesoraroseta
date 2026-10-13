@@ -33,5 +33,12 @@ Rails.application.routes.draw do
         patch :move, on: :member
       end
     end
+
+    # Torn Posters: uploaded many at once (create), edited together in one table (bulk_update), and one by
+    # one on their own page to replace the photo (edit, update). Show redirects to edit.
+    resources :torn_posters, path: "torn-posters", except: :new do
+      patch :move, on: :member
+      patch :bulk_update, on: :collection
+    end
   end
 end
