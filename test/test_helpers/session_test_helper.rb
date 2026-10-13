@@ -19,13 +19,13 @@ module SessionTestHelper
 end
 
 # System tests drive a real browser, so the cookie goes into the browser. Selenium only sets cookies
-# for the page it is on, hence the visit to /up first.
+# for the page it is on, hence the visit to the health check (/up) first.
 module SystemSessionTestHelper
   def sign_in_as(user)
     session = user.sessions.create!
     signed_id = ActionDispatch::TestRequest.create.cookie_jar.tap { |jar| jar.signed[:session_id] = session.id }[:session_id]
 
-    visit rails_health_check_path
+    visit "/up"
     page.driver.browser.manage.add_cookie(
       name: "session_id", value: Rack::Utils.escape(signed_id), path: "/", http_only: true, same_site: "Lax"
     )
