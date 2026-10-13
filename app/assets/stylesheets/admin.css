@@ -193,6 +193,15 @@ body.admin {
   color: var(--admin-ink-2);
 }
 
+.breadcrumb {
+  margin: 0 0 4px;
+  font-size: 0.9rem;
+}
+
+.breadcrumb a::before {
+  content: "← ";
+}
+
 .section {
   margin-top: 32px;
   padding: 20px;
@@ -446,6 +455,10 @@ body.admin {
   resize: vertical;
 }
 
+.admin input.input-short {
+  max-width: 14rem;
+}
+
 .admin input[type="file"] {
   display: block;
   max-width: 100%;
@@ -520,18 +533,42 @@ body.admin {
   left: 23px;
 }
 
-/* Rich text (Lexxy) */
-.admin lexxy-editor {
-  display: block;
+/* Rich text (Lexxy): the Spanish toolbar sits just before its editor, in one box. Lexxy defines the
+   toolbar's sizes on lexxy-editor, so the box defines them for both. */
+.rich-text {
+  --lexxy-toolbar-gap: 2px;
+  --lexxy-toolbar-spacing: 0.5ch;
+  --lexxy-toolbar-padding: 2px;
+  --lexxy-toolbar-border-size: 1px;
+
   max-width: 40rem;
   background: var(--admin-surface);
   border: 1px solid var(--admin-line-strong);
   border-radius: var(--admin-radius);
+  container-type: inline-size;
 }
 
-.admin lexxy-editor .lexxy-editor__content {
+.rich-text:focus-within {
+  outline: 3px solid var(--admin-focus);
+  outline-offset: 2px;
+}
+
+.rich-text lexxy-editor {
+  border: 0;
+  border-radius: 0 0 var(--admin-radius) var(--admin-radius);
+}
+
+.rich-text .lexxy-editor__content {
   min-height: 10rem;
   padding: 10px 12px;
+}
+
+.rich-text .lexxy-editor__content:focus-visible {
+  outline: none;
+}
+
+.field--invalid .rich-text {
+  border: 2px solid var(--admin-error);
 }
 
 /* Images ----------------------------------------------------------------------------------------- */

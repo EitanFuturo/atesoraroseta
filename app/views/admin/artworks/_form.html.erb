@@ -1,0 +1,59 @@
+<%= form_with model: [ :admin, artwork ], class: "form", html: { novalidate: true },
+      data: { unsaved_changes_main: true, controller: ("slug" if artwork.new_record?) } do |form| %>
+  <%= render "admin/shared/error_summary", record: artwork, form: form %>
+
+  <fieldset class="fieldset">
+    <legend><%= t(".artwork") %></legend>
+
+    <%= admin_field form, :title, required: true do |aria| %>
+      <%= form.text_field :title, aria: aria,
+            data: (artwork.new_record? ? { slug_target: "title", action: "input->slug#titleChanged" } : {}) %>
+    <% end %>
+
+    <% slug_hint = artwork.new_record? ? t(".hints.slug_new") : t(".hints.slug", url: artwork_url(artwork)) %>
+    <%= admin_field form, :slug, hint: slug_hint do |aria| %>
+      <%= form.text_field :slug, aria: aria, autocomplete: "off", spellcheck: false, autocapitalize: "none",
+            data: (artwork.new_record? ? { slug_target: "slug", action: "input->slug#slugChanged" } : {}) %>
+    <% end %>
+
+    <%= admin_field form, :years, hint: t(".hints.years") do |aria| %>
+      <%= form.text_field :years, aria: aria, autocomplete: "off", class: "input-short" %>
+    <% end %>
+
+    <%= admin_field form, :medium, hint: t(".hints.medium") do |aria| %>
+      <%= form.text_field :medium, aria: aria %>
+    <% end %>
+
+    <%= admin_field form, :dimensions, hint: t(".hints.dimensions") do |aria| %>
+      <%= form.text_field :dimensions, aria: aria %>
+    <% end %>
+
+    <%= render "admin/shared/rich_text_field", form: form, attribute: :description, hint: t(".hints.description") %>
+
+    <div class="field switch-field">
+      <%= form.check_box :published, role: "switch", aria: { describedby: form.field_id(:published, :hint) } %>
+      <div>
+        <%= form.label :published %>
+        <p class="hint" id="<%= form.field_id(:published, :hint) %>"><%= t(".hints.published") %></p>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset class="fieldset">
+    <legend><%= t(".main_image") %></legend>
+
+    <%= render "admin/shared/image_field", form: form, attribute: :image, required: true %>
+
+    <%= admin_field form, :image_alt, hint: t(".hints.image_alt") do |aria| %>
+      <%= form.text_field :image_alt, aria: aria %>
+      <% if artwork.persisted? && artwork.attribute_in_database(:image_alt).blank? %>
+        <p class="warning"><%= t(".alt_missing") %></p>
+      <% end %>
+    <% end %>
+  </fieldset>
+
+  <div class="form-actions">
+    <%= form.submit artwork.new_record? ? t(".create") : t(".save"), class: "button" %>
+    <%= link_to t(".back"), admin_artworks_path %>
+  </div>
+<% end %>

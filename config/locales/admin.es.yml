@@ -23,25 +23,62 @@ es:
       view_on_site: "Ver en la web"
       preview_on_site: "Ver en la web (vista previa)"
       unpublished_on_site: "Ver en la web (sin publicar)"
+      edit: "Editar"
 
     records:
       published: "Publicada"
       draft: "Borrador"
 
+    forms:
+      required: "(obligatorio)"
+      unsaved_changes: "Hay cambios sin guardar en esta página. Si continúas, se perderán. ¿Continuar?"
+      error_summary:
+        title:
+          one: "No se ha podido guardar: hay 1 cosa que corregir"
+          other: "No se ha podido guardar: hay %{count} cosas que corregir"
+
     images:
       no_preview: "Sin imagen"
       dimensions: "%{width} × %{height} px"
       formats: "%{formats}, hasta %{max_megabytes} MB."
+      choose_hint: "Elige un archivo."
+      replace_hint: "Para cambiarla, elige otro archivo."
       pending: "Imagen nueva, todavía sin guardar."
+      choose_again: "La imagen nueva no se ha guardado: vuelve a elegirla."
+      remove: "Quitar esta imagen al guardar"
       unknown_size: "No se ha podido leer el tamaño de esta imagen. Si en la web no se ve bien, vuelve a subirla."
       low_resolution: "Imagen pequeña: %{long_side} px en el lado largo. Para que se vea nítida en pantallas grandes, sube al menos %{minimum} px."
       icon_small: "Icono pequeño: %{size} px. Para que se vea nítido, sube una imagen cuadrada de al menos %{minimum} × %{minimum} px."
       icon_not_square: "El icono no es cuadrado (%{width} × %{height} px): se usará su parte central."
 
+    # Messages of the file fields, shown by JavaScript (upload_controller.js) and after saving.
+    uploads:
+      too_large: "«%{name}» pesa %{size} MB y el máximo es %{max} MB: no se subirá."
+      wrong_type: "«%{name}» no es una imagen %{formats}: no se subirá."
+      ready: "Lista para subir"
+      uploading: "Subiendo…"
+      done: "Subida"
+      failed: "No se ha podido subir «%{name}». Comprueba la conexión y vuelve a intentarlo."
+      rejected: "«%{name}»: %{reasons}"
+      rejected_unknown: "Un archivo no se ha podido leer."
+
+    rich_text:
+      bold: "Negrita"
+      italic: "Cursiva"
+      link: "Enlace"
+      link_url: "Dirección del enlace"
+      add_link: "Enlazar"
+      remove_link: "Quitar el enlace"
+      undo: "Deshacer"
+      redo: "Rehacer"
+      more: "Más opciones"
+
     artworks:
       index:
         title: "Obras"
         intro: "Las obras salen en la web en este orden. Solo se ven las publicadas."
+        new: "Nueva obra"
+        edit_label: "Editar «%{title}»"
         empty: "Todavía no hay obras."
         columns:
           image: "Imagen"
@@ -58,6 +95,40 @@ es:
           details_alt_missing:
             one: "1 detalle sin texto alternativo"
             other: "%{count} detalles sin texto alternativo"
+      new:
+        title: "Nueva obra"
+        intro: "Después de crearla podrás añadirle fotos de detalle."
+      edit:
+        destroy:
+          heading: "Eliminar la obra"
+          text:
+            zero: "Se borran la obra y su imagen. No se puede deshacer."
+            one: "Se borran la obra, su imagen y su detalle. No se puede deshacer."
+            other: "Se borran la obra, su imagen y sus %{count} detalles. No se puede deshacer."
+          button: "Eliminar la obra"
+          confirm: "¿Eliminar «%{title}» y todas sus fotos? No se puede deshacer."
+      form:
+        artwork: "La obra"
+        main_image: "Imagen principal"
+        create: "Crear la obra"
+        save: "Guardar cambios"
+        back: "Volver a las obras"
+        alt_missing: "Falta el texto alternativo: ahora se usa el título."
+        hints:
+          slug_new: "La dirección de la obra en la web. Se rellena sola a partir del título; si la cambias, usa solo letras minúsculas sin acentos, números y guiones."
+          slug: "La obra está en %{url}. Si la cambias, los enlaces que ya se hayan compartido dejarán de funcionar. Si la dejas vacía, se crea de nuevo a partir del título."
+          years: "Un año (2024) o un periodo (2023–2024)."
+          medium: "Por ejemplo: carteles arrancados sobre papel."
+          dimensions: "Por ejemplo: 120 × 90 cm."
+          description: "Opcional. Un texto corto que sale junto a la obra."
+          published: "Si está publicada, se ve en la web. Si no, solo tú puedes verla, como vista previa."
+          image_alt: "Describe la obra para quien no puede verla (lectores de pantalla, buscadores). Si lo dejas vacío, se usa el título."
+      create:
+        notice: "Obra «%{title}» creada. Ahora puedes añadirle fotos de detalle."
+      update:
+        notice: "Cambios guardados."
+      destroy:
+        notice: "Obra «%{title}» eliminada."
 
   sessions:
     new:

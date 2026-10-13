@@ -1,0 +1,69 @@
+<%#
+  One image field: the current image (thumbnail, size in pixels, warnings), a file input that uploads
+  straight to Active Storage with its progress, and the field's errors.
+
+  Locals: form, attribute (:image, :portrait…), required (false), label (nil: the attribute's name),
+  hint (nil: an extra sentence), removable (false: offers "Quitar esta imagen"), kind (:photo, or :icon
+  for the favicon's own checks).
+%>
+<% required = local_assigns.fetch(:required, false) %>
+<% removable = local_assigns.fetch(:removable, false) %>
+<% kind = local_assigns.fetch(:kind, :photo) %>
+<% record = form.object %>
+<% attachment = record.public_send(attribute) %>
+<% errors = admin_errors_for(form, attribute) %>
+<% pending = admin_image_pending?(attachment) %>
+<%# A refused new file is never shown: the saved image (if any) still is the current one. %>
+<% shown = pending && errors.any? ? admin_saved_image(attachment) : attachment %>
+<% field_id = form.field_id(attribute) %>
+<% hint_id = "#{field_id}_hint" %>
+<% error_id = "#{field_id}_error" %>
+
+<%= tag.div class: [ "field", "image-field", ("field--invalid" if errors.any?) ], data: admin_upload_data do %>
+  <%= form.label attribute, admin_label_text(form, attribute, local_assigns[:label], required) %>
+  <p class="hint" id="<%= hint_id %>">
+    <%= shown&.attached? ? t("admin.images.replace_hint") : t("admin.images.choose_hint") %>
+    <%= admin_image_formats_hint %>
+    <%= local_assigns[:hint] %>
+  </p>
+
+  <% if shown&.attached? %>
+    <div class="image-current">
+      <%= admin_thumbnail shown, large: true %>
+      <div class="image-current__info">
+        <% if admin_image_reusable?(shown) %>
+          <p><%= t("admin.images.pending") %></p>
+        <% elsif admin_image_pending?(shown) %>
+          <p><%= t("admin.images.choose_again") %></p>
+        <% elsif (dimensions = admin_image_dimensions(shown)) %>
+          <p class="dimensions"><%= dimensions %></p>
+        <% end %>
+        <% admin_image_warnings(shown, kind: kind).each do |warning| %>
+          <p class="warning"><%= warning %></p>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <%# A valid upload from a form that came back with other errors: sent again unless another file is chosen. %>
+  <% if admin_image_reusable?(attachment) && errors.none? %>
+    <%= form.hidden_field attribute, value: attachment.blob.signed_id, id: nil %>
+  <% end %>
+
+  <%= form.file_field attribute, accept: admin_image_accept, direct_upload: true,
+        data: { upload_target: "input", action: "upload#check" },
+        aria: { describedby: [ hint_id, (error_id if errors.any?) ].compact.join(" "), invalid: (true if errors.any?) }.compact %>
+  <p class="upload-errors" data-upload-target="errors" role="alert"></p>
+  <ul class="uploads" data-upload-target="list" aria-live="polite"></ul>
+
+  <% if errors.any? %>
+    <p class="field-error" id="<%= error_id %>"><%= errors.to_sentence %></p>
+  <% end %>
+
+  <% if removable && shown&.attached? && !pending %>
+    <p class="remove-image">
+      <%= check_box_tag "#{form.object_name}[remove_#{attribute}]", "1", false, id: "#{field_id}_remove" %>
+      <%= label_tag "#{field_id}_remove", t("admin.images.remove") %>
+    </p>
+  <% end %>
+<% end %>

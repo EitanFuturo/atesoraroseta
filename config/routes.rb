@@ -23,6 +23,7 @@ Rails.application.routes.draw do
   namespace :admin do
     root "artworks#index"
 
-    resources :artworks, only: :index
+    # Works are found by slug (Artwork#to_param); show redirects to edit.
+    resources :artworks
   end
 end

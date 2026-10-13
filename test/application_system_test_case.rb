@@ -6,12 +6,18 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     options.logging_prefs = { browser: "ALL" }
   end
 
+  # Messages that aren't page errors: a request that failed on purpose (a form that comes back with errors
+  # is a 422), and Chrome declining to show the "leave this page?" warning of a page with unsaved changes.
+  IGNORED_BROWSER_MESSAGES = [ "Failed to load resource", "Blocked attempt to show a 'beforeunload' confirmation panel" ].freeze
+
+  # The previous test's last page may log while the browser resets; start each test with an empty log.
+  setup { browser_errors }
+
   # The browser's console errors since the last read (reading empties the log): uncaught exceptions and
-  # Content Security Policy violations. Failed requests are left out, since a form that comes back with
-  # errors (422) is logged as one.
+  # Content Security Policy violations.
   def browser_errors
     page.driver.browser.logs.get(:browser)
-      .select { |entry| entry.level == "SEVERE" && !entry.message.include?("Failed to load resource") }
+      .select { |entry| entry.level == "SEVERE" && IGNORED_BROWSER_MESSAGES.none? { |message| entry.message.include?(message) } }
       .map(&:message)
   end
 

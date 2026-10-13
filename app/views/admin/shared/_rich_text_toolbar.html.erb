@@ -1,0 +1,44 @@
+<%#
+  The rich-text editor's toolbar, in Spanish, used instead of Lexxy's English one through the editor's
+  toolbar="<id>" attribute. It offers what the public pages style: bold, italic and links, plus undo and redo.
+  The markup, names and data-command values are Lexxy 1.0's; the icons are its own (MIT).
+  Locals: id (the toolbar's id), editor_id (the editor's id, for a unique id on the link field).
+%>
+<lexxy-toolbar id="<%= id %>">
+  <button class="lexxy-editor__toolbar-button" type="button" name="bold" data-command="bold" title="<%= t("admin.rich_text.bold") %>">
+    <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M9.05273 1.88232C10.6866 1.88237 12.0033 2.20353 12.9529 2.89673L13.1272 3.0293C13.974 3.70864 14.4008 4.63245 14.4009 5.76562C14.4008 6.49354 14.2316 7.15281 13.8845 7.73145C13.6683 8.09188 13.3997 8.40162 13.0818 8.66016C13.5902 8.92606 14.0196 9.28599 14.3635 9.74121C14.8586 10.3834 15.0945 11.1743 15.0945 12.0879C15.0944 13.3698 14.5922 14.3931 13.5879 15.1106L13.5857 15.1128C12.5967 15.805 11.196 16.125 9.43799 16.125H3.10547V1.88232L9.05273 1.88232ZM6.36108 13.4084H9.28418C10.224 13.4084 10.8634 13.2491 11.2581 12.9851C11.6259 12.7389 11.8198 12.3768 11.8198 11.8367C11.8197 11.2968 11.6259 10.9351 11.2581 10.689C10.8634 10.425 10.2241 10.2649 9.28418 10.2649H6.36108V13.4084ZM6.36108 7.56812H8.78247C9.5163 7.56809 10.0547 7.45371 10.429 7.25757L10.5791 7.16895C10.9438 6.92178 11.1255 6.57934 11.1255 6.09302C11.1254 5.59017 10.9414 5.25227 10.5835 5.02002L10.5784 5.01636L10.5732 5.01343C10.1994 4.75387 9.61878 4.59818 8.78247 4.59814H6.36108V7.56812Z"/></svg>
+  </button>
+
+  <button class="lexxy-editor__toolbar-button lexxy-editor__toolbar-group-end" type="button" name="italic" data-command="italic" title="<%= t("admin.rich_text.italic") %>">
+    <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M14.1379 3.91187L14.1086 4.06421H11.4668L9.49805 13.9431H12.0981L11.7473 15.7852L11.7188 15.9375H4.16675L4.51758 14.0955L4.54614 13.9431H7.18799L9.17505 4.06421H6.55664L6.90747 2.22217L6.93677 2.06982H14.4888L14.1379 3.91187Z"/></svg>
+  </button>
+
+  <lexxy-link-dropdown class="lexxy-editor__toolbar-dropdown lexxy-editor__toolbar-dropdown--link">
+    <button data-dropdown-trigger class="lexxy-editor__toolbar-button lexxy-editor__toolbar-group-end" type="button" name="link" title="<%= t("admin.rich_text.link") %>" data-hotkey="cmd+k ctrl+k" aria-haspopup="dialog" aria-expanded="false">
+      <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12.8885 7.23091L13.9479 6.17155C14.5337 5.58576 14.5337 4.63602 13.9479 4.05023C13.3621 3.46444 12.4124 3.46444 11.8266 4.05023L8.29235 7.58446C7.9263 7.95051 7.90312 8.52994 8.2233 8.92271L8.36141 9.07463C8.68158 9.4674 8.65841 10.0468 8.29235 10.4129C7.90183 10.8034 7.26866 10.8034 6.87814 10.4129C5.70657 9.24131 5.70657 7.34182 6.87814 6.17025L10.4124 2.63602C11.7792 1.26918 13.9953 1.26918 15.3621 2.63602C16.729 4.00285 16.729 6.21893 15.3621 7.58576L14.3028 8.64512C13.9122 9.03564 13.2791 9.03564 12.8885 8.64512C12.498 8.2546 12.498 7.62143 12.8885 7.23091Z"/><path d="M5.11038 10.7664L4.04843 11.8284C3.46264 12.4142 3.46264 13.3639 4.04842 13.9497C4.63421 14.5355 5.58396 14.5355 6.16975 13.9497L9.70657 10.4129C10.0726 10.0468 10.0958 9.46741 9.77563 9.07464L9.63752 8.92272C9.31734 8.52995 9.34052 7.95052 9.70657 7.58446C10.0971 7.19394 10.7303 7.19394 11.1208 7.58446C12.2924 8.75604 12.2924 10.6555 11.1208 11.8271L7.58396 15.3639C6.21712 16.7308 4.00105 16.7308 2.63421 15.3639C1.26738 13.9971 1.26738 11.781 2.63421 10.4142L3.69617 9.35223C4.08669 8.96171 4.71986 8.96171 5.11038 9.35223C5.5009 9.74275 5.5009 10.3759 5.11038 10.7664Z"/></svg>
+    </button>
+    <div data-dropdown-panel role="dialog" aria-label="<%= t("admin.rich_text.link") %>" hidden>
+      <input type="url" class="input" id="<%= editor_id %>-link-url" placeholder="https://…" aria-label="<%= t("admin.rich_text.link_url") %>">
+      <div class="lexxy-editor__toolbar-dropdown-actions">
+        <button type="button" class="lexxy-editor__toolbar-button" value="link"><%= t("admin.rich_text.add_link") %></button>
+        <button type="button" class="lexxy-editor__toolbar-button" value="unlink"><%= t("admin.rich_text.remove_link") %></button>
+      </div>
+    </div>
+  </lexxy-link-dropdown>
+
+  <button class="lexxy-editor__toolbar-button lexxy-editor__toolbar-button--push-right" type="button" name="undo" data-command="undo" title="<%= t("admin.rich_text.undo") %>" aria-disabled="true">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8.36612 5.36612C8.85427 4.87796 9.64554 4.87796 10.1337 5.36612C10.6218 5.85428 10.6218 6.64557 10.1337 7.13369L7.26748 9.9999H15.2499C18.1494 9.99996 20.4999 12.3504 20.4999 15.2499V19.2499C20.4999 19.9402 19.9402 20.4999 19.2499 20.4999C18.5596 20.4999 18 19.9402 17.9999 19.2499V15.2499C17.9999 13.7312 16.7686 12.5 15.2499 12.4999H7.26748L10.1337 15.3661C10.6218 15.8543 10.6218 16.6456 10.1337 17.1337C9.64557 17.6218 8.85428 17.6218 8.36612 17.1337L3.36612 12.1337C2.87796 11.6455 2.87796 10.8543 3.36612 10.3661L8.36612 5.36612Z"/></svg>
+  </button>
+
+  <button class="lexxy-editor__toolbar-button" type="button" name="redo" data-command="redo" title="<%= t("admin.rich_text.redo") %>" aria-disabled="true">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M15.6338 5.1163C15.1456 4.62814 14.3543 4.62814 13.8662 5.1163C13.3781 5.60446 13.3781 6.39575 13.8662 6.88388L16.7324 9.75009H8.74997C5.85052 9.75014 3.49997 12.1006 3.49997 15.0001V19.0001C3.50002 19.6904 4.05969 20.25 4.74997 20.2501C5.4403 20.2501 5.99992 19.6904 5.99997 19.0001V15.0001C5.99997 13.4813 7.23123 12.2501 8.74997 12.2501H16.7324L13.8662 15.1163C13.3781 15.6045 13.3781 16.3958 13.8662 16.8839C14.3543 17.372 15.1456 17.3719 15.6338 16.8839L20.6338 11.8839C21.1219 11.3957 21.1219 10.6045 20.6338 10.1163L15.6338 5.1163Z"/></svg>
+  </button>
+
+  <%# Lexxy moves buttons here when the toolbar is too narrow; it needs this element to exist. %>
+  <lexxy-toolbar-dropdown class="lexxy-editor__toolbar-dropdown lexxy-editor__toolbar-button--push-right lexxy-editor__toolbar-overflow">
+    <button data-dropdown-trigger class="lexxy-editor__toolbar-button" type="button" title="<%= t("admin.rich_text.more") %>" aria-haspopup="menu" aria-expanded="false">
+      <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3 6.75C4.24264 6.75 5.25 7.75736 5.25 9C5.25 10.2426 4.24264 11.25 3 11.25C1.75736 11.25 0.75 10.2426 0.75 9C0.75 7.75736 1.75736 6.75 3 6.75ZM9 6.75C10.2426 6.75 11.25 7.75736 11.25 9C11.25 10.2426 10.2426 11.25 9 11.25C7.75736 11.25 6.75 10.2426 6.75 9C6.75 7.75736 7.75736 6.75 9 6.75ZM15 6.75C16.2426 6.75 17.25 7.75736 17.25 9C17.25 10.2426 16.2426 11.25 15 11.25C13.7574 11.25 12.75 10.2426 12.75 9C12.75 7.75736 13.7574 6.75 15 6.75Z"/></svg>
+    </button>
+    <div data-dropdown-panel role="menu" class="lexxy-editor__toolbar-overflow-menu" aria-label="<%= t("admin.rich_text.more") %>" hidden></div>
+  </lexxy-toolbar-dropdown>
+</lexxy-toolbar>
