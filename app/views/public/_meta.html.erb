@@ -1,0 +1,27 @@
+<%# Description, canonical URL, Open Graph and Twitter tags, and the favicons (PageMetaHelper). %>
+<% description = page_description %>
+<% canonical = page_canonical_url %>
+<% og_image_url = page_og_image_url %>
+<%= tag.meta name: "description", content: description if description %>
+<%= tag.link rel: "canonical", href: canonical if canonical %>
+<%= tag.meta property: "og:type", content: "website" %>
+<%= tag.meta property: "og:site_name", content: site.wordmark %>
+<%= tag.meta property: "og:locale", content: "es_ES" %>
+<%= tag.meta property: "og:title", content: page_title %>
+<%= tag.meta property: "og:description", content: description if description %>
+<%= tag.meta property: "og:url", content: canonical if canonical %>
+<% if og_image_url %>
+  <%= tag.meta property: "og:image", content: og_image_url %>
+  <%= tag.meta property: "og:image:type", content: "image/jpeg" %>
+  <%= tag.meta property: "og:image:width", content: ImageVariants::OG_SIZE.first %>
+  <%= tag.meta property: "og:image:height", content: ImageVariants::OG_SIZE.last %>
+  <%= tag.meta property: "og:image:alt", content: page_og_image_alt if page_og_image_alt %>
+  <%= tag.meta name: "twitter:card", content: "summary_large_image" %>
+<% end %>
+<% favicon_variants.each do |size, variant| %>
+  <% if size == 180 %>
+    <%= tag.link rel: "apple-touch-icon", sizes: "180x180", href: url_for(variant) %>
+  <% else %>
+    <%= tag.link rel: "icon", type: "image/png", sizes: "#{size}x#{size}", href: url_for(variant) %>
+  <% end %>
+<% end %>

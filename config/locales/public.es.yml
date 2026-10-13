@@ -1,0 +1,13 @@
+# Public site strings that are not content (overview §4.3). Every word a visitor sees comes from the settings
+# record (Site) or from the records; these are only the names screen readers announce and the notice a
+# signed-in admin sees when previewing an unpublished work.
+
+es:
+  public:
+    nav:
+      # The menu's <nav aria-label>.
+      main: "Principal"
+      # The previous/next <nav aria-label> on artwork pages.
+      other_works: "Otras obras"
+    # Shown above an unpublished artwork to a signed-in admin only; visitors get a 404.
+    preview_notice: "Vista previa: esta obra no está publicada. Solo la ves porque has iniciado sesión."
