@@ -1,5 +1,5 @@
-# Kamal configuration for atesoraroseta.com. DEPLOY.md explains every step; replace the <PLACEHOLDERS>
-# first (part B).
+# Kamal configuration for atesoraroseta.com. DEPLOY.md explains every step; first replace the values in
+# angle brackets (DEPLOY.md, "Values you must provide").
 #
 # The droplet is shared with other projects. Each one is its own Kamal app behind the single kamal-proxy
 # that Kamal runs on ports 80 and 443, which routes every request by host name. To be a good neighbour,
@@ -13,7 +13,7 @@
 # Name of the application. Used to uniquely configure containers.
 service: atesoraroseta
 
-# The image, in DigitalOcean Container Registry: registry.digitalocean.com/<REGISTRY_NAME>/atesoraroseta.
+# The image's repository in DigitalOcean Container Registry (Kamal puts registry.digitalocean.com/ in front).
 image: <REGISTRY_NAME>/atesoraroseta
 
 # The droplet.
@@ -91,14 +91,14 @@ volumes:
 # version inside the asset_path.
 asset_path: /rails/public/assets
 
-# Old containers (and their images) kept on the droplet for rollbacks: the running version plus two
-# previous ones. Kamal's default, 5, keeps more disk busy on a server other projects share.
+# Stopped containers (and their images) kept on the droplet for rollbacks, besides the running one.
+# Kamal's default, 5, keeps more disk busy on a server other projects share.
 retain_containers: 3
 
 # Configure the image builder. The droplet is amd64 and this Mac is arm64: the image is built here, under
 # Docker Desktop's amd64 emulation, so the shared droplet never spends CPU, memory or disk on builds. To
 # build natively on the droplet instead (faster on a slow Mac, but it loads the server every project
-# shares), add: remote: ssh://root@<DROPLET_IP>
+# shares), add a remote: line with the droplet's SSH address, as DEPLOY.md explains (Troubleshooting).
 builder:
   arch: amd64
 
