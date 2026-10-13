@@ -1,15 +1,26 @@
 Rails.application.routes.draw do
-  resource :session
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  # Public site (overview §4.4); the public site work package adds the controllers.
+  root "artworks#index"
+  get "obra/:slug", to: "artworks#show", as: :artwork
+  get "torn-posters", to: "torn_posters#index", as: :torn_posters
+  get "sobre-mi", to: "pages#about", as: :about
+  get "contacto", to: "pages#contact", as: :contact
+  get "sitemap.xml", to: "sitemaps#show", as: :sitemap, defaults: { format: "xml" }
+  get "robots.txt", to: "robots#show", as: :robots, defaults: { format: "text" }
+
+  # Error pages, rendered in the site's layout through config.exceptions_app = routes.
+  match "404", to: "errors#not_found", via: :all
+  match "500", to: "errors#internal_error", via: :all
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
 
-  # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
-  # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
+  # Log in and out. There is no sign-up and no password recovery.
+  resource :session, only: %i[new create destroy]
 
-  # Defines the root path route ("/"): the Obra grid (the controller comes with the public site).
-  root "artworks#index"
+  # The back office: every route here requires login.
+  namespace :admin do
+    root "artworks#index"
+  end
 end
