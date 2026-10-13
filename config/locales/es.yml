@@ -1,0 +1,17 @@
+# Spanish base translations. The rails-i18n gem supplies the framework strings
+# (validation messages, dates, numbers); this file adds the app's own keys.
+
+es:
+  activerecord:
+    models:
+      user:
+        one: "Usuario"
+        other: "Usuarios"
+      session:
+        one: "Sesión"
+        other: "Sesiones"
+    attributes:
+      user:
+        email_address: "Correo electrónico"
+        password: "Contraseña"
+        password_confirmation: "Confirmación de la contraseña"

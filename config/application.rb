@@ -35,5 +35,13 @@ module Atesoraroseta
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    # The site and the admin are in Spanish only; rails-i18n supplies the framework translations.
+    config.i18n.default_locale = :es
+    config.i18n.available_locales = [ :es ]
+
+    # Serve Active Storage files through the app: stable URLs with far-future cache headers,
+    # instead of expiring redirect URLs. Variants use libvips (the 8.1 default, :vips).
+    config.active_storage.resolve_model_to_route = :rails_storage_proxy
   end
 end
