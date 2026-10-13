@@ -13,10 +13,11 @@
 #   --tab N          press Tab N times before shooting (keyboard focus)
 #   --run NAME       the output folder's name (default: a timestamp plus "app" or "reference")
 #
-# PNGs go to tmp/screenshots/<run>/<page>-<width>.png. Widths are exact: CDP's Emulation.setDeviceMetricsOverride
-# (a headless window can't be narrower than ~500px), and the viewport grows to the page's full height so lazy
-# images load before Page.captureScreenshot. Any page that scrolls sideways (scrollWidth > clientWidth) is printed.
-# Needs the selenium-webdriver gem (test group) and Google Chrome.
+# PNGs go to tmp/page-screenshots/<run>/<page>-<width>.png. (Not tmp/screenshots: that folder belongs to the
+# system tests' failure screenshots, and Rails' tmp:clear, which bin/setup runs, fails on folders inside it.)
+# Widths are exact: CDP's Emulation.setDeviceMetricsOverride (a headless window can't be narrower than ~500px), and
+# the viewport grows to the page's full height so lazy images load before Page.captureScreenshot. Any page that
+# scrolls sideways (scrollWidth > clientWidth) is printed. Needs the selenium-webdriver gem (test group) and Chrome.
 require "bundler/setup"
 require "base64"
 require "fileutils"
@@ -49,7 +50,7 @@ OptionParser.new do |parser|
   parser.on("--touch", "Emulate a touch screen (hover: none)") { options[:touch] = true }
   parser.on("--hover CSS", "Hover the first element matching CSS") { |value| options[:hover] = value }
   parser.on("--tab N", Integer, "Press Tab N times") { |value| options[:tab] = value }
-  parser.on("--run NAME", "Output folder name under tmp/screenshots") { |value| options[:run] = value }
+  parser.on("--run NAME", "Output folder name under tmp/page-screenshots") { |value| options[:run] = value }
 end.parse!
 
 names = ARGV.empty? ? PAGES.keys : ARGV
@@ -69,7 +70,7 @@ targets = names.map do |name|
 end
 
 run = options[:run] || "#{Time.now.strftime("%Y%m%d-%H%M%S")}-#{options[:reference] ? "reference" : "app"}"
-out_dir = File.join(ROOT, "tmp/screenshots", run)
+out_dir = File.join(ROOT, "tmp/page-screenshots", run)
 FileUtils.mkdir_p(out_dir)
 
 chrome_options = Selenium::WebDriver::Chrome::Options.new(
