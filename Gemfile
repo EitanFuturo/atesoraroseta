@@ -36,7 +36,21 @@ gem "kamal", require: false
 gem "thruster", require: false
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-gem "image_processing", "~> 1.2"
+# image_processing 2.x carries security fixes and no longer pulls in ruby-vips, so it is listed explicitly.
+gem "image_processing", "~> 2.2"
+gem "ruby-vips", "~> 2.3"
+
+# Rich text editor for Action Text, saving real <p> paragraphs [https://lexxy.dev]
+gem "lexxy", "~> 1.0.1"
+
+# Ordering of artworks, details and torn posters [https://github.com/brendon/acts_as_list]
+gem "acts_as_list"
+
+# Spanish framework translations: validation messages, dates, numbers [https://github.com/svenfuchs/rails-i18n]
+gem "rails-i18n", "~> 8.1"
+
+# Off-server backups of the uploads to DigitalOcean Spaces (S3 API); required only by the backup code
+gem "aws-sdk-s3", require: false
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
