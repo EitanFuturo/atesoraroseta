@@ -1,6 +1,17 @@
 # Omakase Ruby styling for Rails
 inherit_gem: { rubocop-rails-omakase: rubocop.yml }
 
+# Add to the inherited and default excludes instead of replacing them.
+inherit_mode:
+  merge:
+    - Exclude
+
+AllCops:
+  Exclude:
+    # Claude Code agent worktrees (full copies of the app) and the design handoff.
+    - ".claude/**/*"
+    - "design/**/*"
+
 # Overwrite or add rules to create your own house style
 #
 # # Use `[a, [b, c]]` not `[ a, [ b, c ] ]`
