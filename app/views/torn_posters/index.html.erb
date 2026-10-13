@@ -4,7 +4,7 @@
   <% if site.torn_posters_intro.present? %>
     <p class="posters-intro"><%= site.torn_posters_intro %></p>
   <% end %>
-  <% if @posters.any? %>
+  <% if @posters.present? %>
     <div class="photo-grid">
       <% sizes = poster_sizes %>
       <% @posters.each_with_index do |poster, index| %>
