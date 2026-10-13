@@ -1,0 +1,29 @@
+# Litestream 0.5 (the litestream accessory in config/deploy.yml, image litestream/litestream:0.5.17).
+#
+# It continuously replicates the main database to this project's private Spaces bucket, under db/. The
+# cache, queue and cable databases are left out: they hold nothing that needs keeping, and db:prepare
+# recreates them empty after a restore. The uploaded images are backed up separately (BackupUploadsJob).
+#
+# The ${VARIABLES} come from the accessory's environment, set in config/deploy.yml: SPACES_BUCKET,
+# SPACES_REGION and SPACES_ENDPOINT in clear, SPACES_ACCESS_KEY_ID and SPACES_SECRET_ACCESS_KEY as secrets
+# (from the encrypted credentials, through .kamal/secrets). Kamal uploads this file when the accessory
+# boots, so a change here takes effect with: bin/kamal accessory reboot litestream
+dbs:
+  - path: /rails/storage/production.sqlite3
+    replica:
+      type: s3
+      bucket: ${SPACES_BUCKET}
+      path: db
+      endpoint: ${SPACES_ENDPOINT}
+      region: ${SPACES_REGION}
+      access-key-id: "${SPACES_ACCESS_KEY_ID}"
+      secret-access-key: "${SPACES_SECRET_ACCESS_KEY}"
+
+# The point-in-time restore window. Litestream uploads every change within a second, compacts the
+# changes into 30-second, 5-minute and hourly files, and takes a full snapshot once a day. Snapshots and
+# every file after the oldest one are kept for 8 days (192h; durations are written in hours), so any
+# moment of the last 7 days can be restored, with a day's margin for the snapshot it starts from.
+# Litestream's default is 24h.
+snapshot:
+  interval: 24h
+  retention: 192h
