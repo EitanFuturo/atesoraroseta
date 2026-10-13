@@ -40,5 +40,8 @@ Rails.application.routes.draw do
       patch :move, on: :member
       patch :bulk_update, on: :collection
     end
+
+    # The settings record (Site), edited on three pages, each with its own fields. Show redirects to edit.
+    resource :about, controller: "about", only: %i[show edit update]
   end
 end

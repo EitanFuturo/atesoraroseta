@@ -15,7 +15,8 @@ module Admin
     def admin_nav_items
       [
         [ Artwork.model_name.human(count: 2), admin_artworks_path, :artworks ],
-        [ t("admin.torn_posters.index.title"), admin_torn_posters_path, :torn_posters ]
+        [ t("admin.torn_posters.index.title"), admin_torn_posters_path, :torn_posters ],
+        [ t("admin.about.edit.title"), edit_admin_about_path, :about ]
       ]
     end
 

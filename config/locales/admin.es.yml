@@ -228,6 +228,26 @@ es:
         up: "La foto ha subido un puesto."
         down: "La foto ha bajado un puesto."
 
+    # Sobre mí, Contacto and Textos del sitio: the settings record (labels in es.yml).
+    site_settings:
+      save: "Guardar cambios"
+      update:
+        notice: "Cambios guardados."
+      hints:
+        about_lead: "La frase grande del principio de la página."
+        about_body: "Los párrafos que siguen a la frase principal."
+        about_contact_link_label: "El texto del enlace a Contacto, al final de la página."
+        portrait: "En la web se recorta en vertical (4:5) desde el centro."
+        portrait_alt: "Describe el retrato para quien no puede verlo. Si lo dejas vacío, el retrato se trata como decorativo."
+
+    about:
+      edit:
+        title: "Sobre mí"
+        intro: "La página Sobre mí: una frase principal, el texto y el retrato."
+        text: "Texto"
+        portrait: "Retrato"
+        portrait_alt_missing: "Falta el texto alternativo del retrato."
+
   sessions:
     new:
       title: "Entrar"

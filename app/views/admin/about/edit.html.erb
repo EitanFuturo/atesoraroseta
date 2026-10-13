@@ -1,0 +1,39 @@
+<% content_for :title, t(".title") %>
+
+<%= tag.div data: admin_unsaved_changes_data(dirty: @site.errors.any?) do %>
+  <div class="page-header">
+    <h1><%= t(".title") %></h1>
+    <div class="page-header__actions">
+      <%= admin_external_link t("admin.shared.view_on_site"), about_path %>
+    </div>
+  </div>
+
+  <p class="page-intro"><%= t(".intro") %></p>
+
+  <%= form_with model: @site, url: admin_about_path, method: :patch, id: "site-form", class: "form", html: { novalidate: true },
+        data: { unsaved_changes_main: true } do |form| %>
+    <%= render "admin/shared/error_summary", record: @site, form: form %>
+
+    <fieldset class="fieldset">
+      <legend><%= t(".text") %></legend>
+      <%= admin_site_field form, :about_lead, as: :text_area %>
+      <%= render "admin/shared/rich_text_field", form: form, attribute: :about_body, hint: t("admin.site_settings.hints.about_body") %>
+      <%= admin_site_field form, :about_contact_link_label %>
+    </fieldset>
+
+    <fieldset class="fieldset">
+      <legend><%= t(".portrait") %></legend>
+      <%= render "admin/shared/image_field", form: form, attribute: :portrait, removable: true, hint: t("admin.site_settings.hints.portrait") %>
+      <%= admin_field form, :portrait_alt, hint: t("admin.site_settings.hints.portrait_alt") do |aria| %>
+        <%= form.text_field :portrait_alt, aria: aria %>
+        <% if @site.portrait.attached? && @site.attribute_in_database(:portrait_alt).blank? %>
+          <p class="warning"><%= t(".portrait_alt_missing") %></p>
+        <% end %>
+      <% end %>
+    </fieldset>
+
+    <div class="form-actions">
+      <%= form.submit t("admin.site_settings.save"), class: "button" %>
+    </div>
+  <% end %>
+<% end %>
