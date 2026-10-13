@@ -15,3 +15,17 @@ es:
         email_address: "Correo electrónico"
         password: "Contraseña"
         password_confirmation: "Confirmación de la contraseña"
+    errors:
+      models:
+        user:
+          attributes:
+            password:
+              # rails-i18n's generic message is masculine ("demasiado corto").
+              too_short:
+                one: "es demasiado corta (%{count} carácter mínimo)"
+                other: "es demasiado corta (%{count} caracteres mínimo)"
+
+  sessions:
+    create:
+      invalid: "El correo electrónico o la contraseña no son correctos."
+      rate_limited: "Demasiados intentos. Espera unos minutos y vuelve a intentarlo."

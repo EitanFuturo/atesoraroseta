@@ -19,6 +19,7 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     post session_path, params: { email_address: @user.email_address, password: "wrong" }
 
     assert_redirected_to new_session_path
+    assert_equal "El correo electrónico o la contraseña no son correctos.", flash[:alert]
     assert_nil cookies[:session_id]
   end
 
