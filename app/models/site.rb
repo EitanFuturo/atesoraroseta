@@ -5,6 +5,8 @@
 #   seeding and a GET never writes.
 # - Site.first_or_create!: what the admin edits (created with the defaults when missing).
 class Site < ApplicationRecord
+  include ImageAttachments
+
   # The default texts (config/site_defaults.yml), keyed by column name.
   DEFAULTS = YAML.load_file(Rails.root.join("config/site_defaults.yml"), aliases: true).each_value(&:freeze).freeze
 
@@ -21,9 +23,9 @@ class Site < ApplicationRecord
   INSTAGRAM_URL_PREFIX = %r{\A(?:https?://)?(?:[a-z0-9-]+\.)*instagram\.com/}i
 
   has_rich_text :about_body
-  has_one_attached :portrait
-  has_one_attached :og_image
-  has_one_attached :favicon
+  image_attachment :portrait, variants: %i[portrait]
+  image_attachment :og_image, variants: %i[og]
+  image_attachment :favicon, variants: %i[favicon]
 
   after_initialize :apply_defaults, if: :new_record?
 

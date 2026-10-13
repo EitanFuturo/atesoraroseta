@@ -1,16 +1,16 @@
 # A detail photo of an artwork, shown in the artwork page's masonry, in its own order.
 class ArtworkDetail < ApplicationRecord
+  include ImageAttachments
+
   # Touching the artwork keeps its updated_at (cache keys, sitemap lastmod) in step with its details.
   belongs_to :artwork, inverse_of: :details, touch: true
 
-  has_one_attached :image
+  image_attachment :image, variants: %i[width], required: true
 
   # New details go to the end of their artwork's list.
   acts_as_list scope: :artwork
 
   normalizes :alt, with: ->(text) { text.strip }
-
-  validates :image, presence: { message: :image_missing }
 
   scope :missing_alt, -> { where(alt: [ nil, "" ]) }
 

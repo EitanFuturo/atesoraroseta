@@ -1,4 +1,5 @@
 class Artwork < ApplicationRecord
+  include ImageAttachments
   include YearRange
 
   SLUG_FORMAT = /\A[a-z0-9]+(?:-[a-z0-9]+)*\z/
@@ -6,7 +7,7 @@ class Artwork < ApplicationRecord
   # Used when a title has no letters or digits to build a slug from.
   FALLBACK_SLUG = "obra"
 
-  has_one_attached :image
+  image_attachment :image, variants: %i[width og], required: true
   has_rich_text :description
   has_many :details, -> { order(:position) }, class_name: "ArtworkDetail", dependent: :destroy, inverse_of: :artwork
 
@@ -20,7 +21,6 @@ class Artwork < ApplicationRecord
 
   validates :title, presence: true
   validates :slug, presence: true, uniqueness: true, format: { with: SLUG_FORMAT, message: :invalid_slug, allow_blank: true }
-  validates :image, presence: { message: :image_missing }
 
   scope :published, -> { where(published: true) }
   # The Obra order: the admin's position, then the most recent (last) year, then creation.

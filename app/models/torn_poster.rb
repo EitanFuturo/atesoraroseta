@@ -1,15 +1,14 @@
 # A photo of a torn poster in the street, shown in the Torn Posters grid. Posters have no page of their own.
 class TornPoster < ApplicationRecord
+  include ImageAttachments
   include YearRange
 
-  has_one_attached :image
+  image_attachment :image, variants: %i[square], required: true
 
   # New photos go to the top of the grid.
   acts_as_list add_new_at: :top
 
   normalizes :place, :city, :alt, with: ->(text) { text.strip }
-
-  validates :image, presence: { message: :image_missing }
 
   scope :published, -> { where(published: true) }
   # The grid order: the admin's position, then the most recent (last) year, then creation.
