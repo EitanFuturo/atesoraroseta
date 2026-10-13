@@ -56,6 +56,7 @@ es:
       low_resolution: "Imagen pequeña: %{long_side} px en el lado largo. Para que se vea nítida en pantallas grandes, sube al menos %{minimum} px."
       icon_small: "Icono pequeño: %{size} px. Para que se vea nítido, sube una imagen cuadrada de al menos %{minimum} × %{minimum} px."
       icon_not_square: "El icono no es cuadrado (%{width} × %{height} px): se usará su parte central."
+      social_small: "Imagen pequeña para compartir: %{width} × %{height} px. Se ve mejor de al menos 1200 × 630 px."
 
     # Messages of the file fields, shown by JavaScript (upload_controller.js) and after saving.
     uploads:
@@ -243,6 +244,26 @@ es:
         email: "Sale como enlace para escribirte. Si lo dejas vacío, no sale."
         instagram_handle: "Sin @; también puedes pegar el enlace del perfil. Si lo dejas vacío, no sale."
         instagram_label: "La palabra que sale encima de tu usuario de Instagram."
+        wordmark: "El nombre del logotipo, arriba a la izquierda. También va en el título de cada página."
+        nav_work_label: "En el menú, y en el enlace de vuelta de cada obra."
+        nav_torn_posters_label: "En el menú."
+        nav_about_label: "En el menú, y como título de la página Sobre mí."
+        nav_contact_label: "En el menú, y como título de la página Contacto."
+        torn_posters_intro: "La línea que sale encima de las fotos de Torn Posters. Si la dejas vacía, no sale."
+        details_label: "El título de la sección de detalles de cada obra."
+        previous_label: "Encima del título de la obra anterior, al final de cada obra."
+        next_label: "Encima del título de la obra siguiente, al final de cada obra."
+        view_details_label: "El enlace a los detalles cuando hay varios. Escribe %{count} donde va el número: «Ver los %{count} detalles» sale como «Ver los 8 detalles»."
+        view_detail_one_label: "El mismo enlace cuando la obra tiene un solo detalle."
+        year_label: "Junto al año de cada obra."
+        medium_label: "Junto a la técnica de cada obra."
+        dimensions_label: "Junto a las medidas de cada obra."
+        seo_description: "Lo que muestran los buscadores, como Google, bajo el enlace a la portada y a Contacto. Mejor si no pasa de unos 155 caracteres."
+        og_image: "La imagen que sale al compartir un enlace de la web en redes sociales o mensajes. Mejor de 1200 × 630 px. Si no pones ninguna, se usa la primera obra."
+        favicon: "El icono de la pestaña del navegador: una imagen cuadrada, mejor en PNG, de al menos 512 × 512 px. Si no pones ninguno, no hay icono."
+        not_found_title: "El título de la página que sale cuando una dirección no existe."
+        not_found_text: "El texto de esa página."
+        not_found_link_label: "El enlace de esa página, que vuelve a la obra."
 
     about:
       edit:
@@ -259,6 +280,17 @@ es:
         contact: "Titular y correo"
         instagram: "Instagram"
         instagram_link: "Ahora enlaza a"
+
+    site_texts:
+      edit:
+        title: "Textos del sitio"
+        intro: "Las palabras fijas de la web: el nombre, el menú, las etiquetas de cada obra y otros textos. Los que llevan «(obligatorio)» no pueden quedar vacíos."
+        header: "Cabecera y menú"
+        torn_posters: "Torn Posters"
+        artwork_page: "Página de cada obra"
+        search: "Buscadores y redes sociales"
+        icon: "Icono del sitio"
+        not_found: "Página no encontrada"
 
   sessions:
     new:

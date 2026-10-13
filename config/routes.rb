@@ -44,5 +44,6 @@ Rails.application.routes.draw do
     # The settings record (Site), edited on three pages, each with its own fields. Show redirects to edit.
     resource :about, controller: "about", only: %i[show edit update]
     resource :contact, controller: "contact", only: %i[show edit update]
+    resource :site_texts, path: "site-texts", only: %i[show edit update]
   end
 end

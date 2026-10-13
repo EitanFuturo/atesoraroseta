@@ -4,6 +4,8 @@ module Admin
   module ImagesHelper
     # The favicon's own minimum: its largest variant is 512 px square.
     ICON_MINIMUM = 512
+    # The default sharing image's size (its og variant): smaller images sit small on a plain ground.
+    SOCIAL_SIZE = ImageVariants::OG_SIZE
 
     # The admin thumbnail (the :thumb variant, up to 320 px), drawn small. Decorative: the text next to
     # it names the record. A placeholder when there is nothing to draw yet.
@@ -41,7 +43,8 @@ module Admin
     end
 
     # The warnings about a saved image, as sentences: too small for large screens, or a size that couldn't
-    # be read. kind: :icon checks the favicon against its own 512 px minimum and squareness instead.
+    # be read. Two images have their own sizes instead of the 1600 px rule: kind: :icon (the favicon: 512 px
+    # and square) and kind: :social (the default sharing image: 1200 × 630 px).
     def admin_image_warnings(attachment, kind: :photo)
       return [] unless attachment&.attached? && !admin_image_pending?(attachment)
 
@@ -50,6 +53,8 @@ module Admin
 
       if kind == :icon
         admin_icon_warnings(width, height)
+      elsif kind == :social
+        width < SOCIAL_SIZE.first || height < SOCIAL_SIZE.last ? [ t("admin.images.social_small", width: width, height: height) ] : []
       elsif attachment.record.public_send(:"#{attachment.name}_low_resolution?")
         [ t("admin.images.low_resolution", long_side: [ width, height ].max, minimum: ImageAttachments::LOW_RESOLUTION_LONG_SIDE) ]
       else
