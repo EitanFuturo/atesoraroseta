@@ -20,8 +20,8 @@ module ResponsiveImagesHelper
   OBRA_PHONE_SIZE = "(max-width: 640px) 91.1vw".freeze
 
   # Artwork hero: the media column beside the 300–360px text column from ~993px (content width − gap − 300px),
-  # the full content width once wrapped. The image is also at most 860px tall and never wider than the original
-  # (width: auto renders it at its sizes width), so the value is capped per image: artwork_hero_sizes.
+  # the full content width once wrapped. The image is also at most 860px tall and never wider than the original,
+  # so the value is capped per image (artwork_hero_sizes) and no larger candidate than needed is fetched.
   ARTWORK_HERO_LAYOUT = [ [ 1440, 0, 948 ], [ 1010, 86.65, -300 ], [ 0, 91.1, 0 ] ].freeze
   ARTWORK_HERO_MAX_HEIGHT = 860
 

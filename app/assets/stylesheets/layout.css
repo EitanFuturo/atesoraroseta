@@ -130,12 +130,16 @@ body { margin: 0; }
 
 .artwork-media { flex: 999 1 560px; min-width: 0; display: flex; justify-content: center; }
 
+/* The canvas sets width: auto; height: auto, which leaves no box before the image arrives, so the text below
+   it jumps on phones (CLS 0.36). Here the width attribute (the original's width) sizes the box instead, capped
+   by the column; the height follows the attributes' ratio, capped at 860px; and object-fit: contain centres a
+   tall work in that box, with transparent sides and its shadow on the image alone. Same picture, no shift. */
 .artwork-img {
   display: block;
-  width: auto;
   height: auto;
   max-width: 100%;
   max-height: 860px;
+  object-fit: contain;
   filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.30)) drop-shadow(0 24px 40px rgba(0, 0, 0, 0.48));
 }
 
