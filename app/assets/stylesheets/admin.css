@@ -820,6 +820,61 @@ body.admin {
   background: #ebe9e4;
 }
 
+.records__facts {
+  display: block;
+  font-size: 0.9rem;
+}
+
+.records__warnings {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.records__warnings .warning {
+  margin: 0;
+}
+
+/* On narrow screens each row of a list becomes a card: image on the left, the rest stacked beside it. */
+@media (max-width: 900px) {
+  .records--stack thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .records--stack,
+  .records--stack tbody,
+  .records--stack td {
+    display: block;
+  }
+
+  .records--stack tr {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    column-gap: 16px;
+    padding: 12px;
+    border-bottom: 1px solid var(--admin-line);
+  }
+
+  .records--stack tbody tr:last-child {
+    border-bottom: 0;
+  }
+
+  .records--stack td {
+    padding: 4px 0;
+    border: 0;
+  }
+
+  .records--stack td:first-child {
+    grid-row: 1 / span 5;
+  }
+}
+
 .empty-state {
   padding: 24px;
   color: var(--admin-ink-2);

@@ -254,6 +254,41 @@ class Admin::ArtworksControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  # Move ----------------------------------------------------------------------------------------------
+
+  test "moving a work one place, back to the list it came from" do
+    patch move_admin_artwork_path(artworks(:range)), params: { direction: "up" }, headers: { "Referer" => admin_root_url }
+
+    assert_redirected_to admin_root_url
+    assert_equal "«Obra con periodo» ha subido un puesto.", flash[:notice]
+    assert_equal %w[obra-con-periodo collage-de-prueba obra-sin-publicar obra-sin-datos], Artwork.ordered.pluck(:slug)
+  end
+
+  test "after moving down, that arrow has the focus again" do
+    patch move_admin_artwork_path(artworks(:collage)), params: { direction: "down" }
+
+    assert_redirected_to admin_artworks_path
+    assert_equal "«Collage de prueba» ha bajado un puesto.", flash[:notice]
+    follow_redirect!
+    assert_select "##{dom_id(artworks(:collage))} button[autofocus]", text: "↓Bajar «Collage de prueba» un puesto"
+    assert_select "meta[name=turbo-refresh-method][content=morph]"
+    assert_select "meta[name=turbo-refresh-scroll][content=preserve]"
+  end
+
+  test "the first work can't go up and the last one can't go down" do
+    get admin_artworks_path
+
+    assert_select "##{dom_id(artworks(:collage))} button[disabled]", text: "↑Subir «Collage de prueba» un puesto"
+    assert_select "##{dom_id(artworks(:bare))} button[disabled]", text: "↓Bajar «Obra sin datos» un puesto"
+    assert_select "##{dom_id(artworks(:range))} button[disabled]", count: 0
+  end
+
+  test "moving the first work up changes nothing" do
+    patch move_admin_artwork_path(artworks(:collage)), params: { direction: "up" }
+
+    assert_equal %w[collage-de-prueba obra-con-periodo obra-sin-publicar obra-sin-datos], Artwork.ordered.pluck(:slug)
+  end
+
   # Destroy -------------------------------------------------------------------------------------------
 
   test "deleting a work deletes its details too" do

@@ -23,10 +23,15 @@ Rails.application.routes.draw do
   namespace :admin do
     root "artworks#index"
 
-    # Works are found by slug (Artwork#to_param); show redirects to edit.
+    # Works are found by slug (Artwork#to_param); show redirects to edit. PATCH …/move?direction=up|down
+    # moves a work or a detail one place.
     resources :artworks do
+      patch :move, on: :member
+
       # Detail photos, on the work's edit page: several uploaded at once.
-      resources :details, controller: "artwork_details", only: %i[create destroy]
+      resources :details, controller: "artwork_details", only: %i[create destroy] do
+        patch :move, on: :member
+      end
     end
   end
 end

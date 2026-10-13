@@ -1,4 +1,6 @@
 <% content_for :title, t(".title") %>
+<%# After ↑ ↓ the page refreshes in place, keeping the scroll position. %>
+<% content_for :head, turbo_refreshes_with(method: :morph, scroll: :preserve) %>
 
 <div class="page-header">
   <h1><%= t(".title") %></h1>
@@ -18,11 +20,12 @@
         <th scope="col"><%= t(".columns.artwork") %></th>
         <th scope="col"><%= t(".columns.status") %></th>
         <th scope="col"><%= t(".columns.warnings") %></th>
+        <th scope="col"><%= t(".columns.order") %></th>
         <th scope="col"><span class="visually-hidden"><%= t(".columns.actions") %></span></th>
       </tr>
     </thead>
     <tbody>
-      <% @artworks.each do |artwork| %>
+      <% @artworks.each_with_index do |artwork, index| %>
         <tr id="<%= dom_id(artwork) %>">
           <td class="records__image"><%= admin_thumbnail artwork.image %></td>
           <td>
@@ -42,6 +45,10 @@
                 <% end %>
               </ul>
             <% end %>
+          </td>
+          <td>
+            <%= admin_move_buttons artwork, path: move_admin_artwork_path(artwork), name: "«#{artwork.title}»",
+                  first: index.zero?, last: index == @artworks.size - 1 %>
           </td>
           <td>
             <ul class="actions-list">

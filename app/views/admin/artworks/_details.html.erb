@@ -1,8 +1,7 @@
 <%#
   The work's detail photos, below its form. Adding photos is a form of its own (each file is uploaded and
-  becomes a detail right away). The alt fields belong to the work's form (form="artwork-form"), so one
-  "Guardar cambios" saves everything typed on the page. Eliminar (and ↑ ↓) use small forms rendered after
-  the list: forms can't nest.
+  becomes a detail right away), and so are ↑ ↓ and Eliminar. The alt fields belong to the work's form
+  (form="artwork-form"), so one "Guardar cambios" saves everything typed on the page.
 %>
 <% details = artwork.details %>
 <% title = artwork.attribute_in_database(:title) %>
@@ -43,10 +42,12 @@
             <% end %>
 
             <div class="detail__actions">
-              <button type="submit" form="<%= dom_id(detail, :destroy) %>" class="button button--danger button--small"
-                      data-turbo-confirm="<%= t(".destroy_confirm", number: index + 1) %>">
+              <%= admin_move_buttons detail, path: move_admin_artwork_detail_path(artwork, detail), name: t(".name", number: index + 1),
+                    first: index.zero?, last: index == details.size - 1 %>
+              <%= button_to admin_artwork_detail_path(artwork, detail), method: :delete, class: "button button--danger button--small",
+                    form: { data: { turbo_confirm: t(".destroy_confirm", number: index + 1) } } do %>
                 <%= t(".destroy") %><span class="visually-hidden"> <%= number %></span>
-              </button>
+              <% end %>
             </div>
           </div>
         </li>
@@ -57,11 +58,6 @@
     <div class="form-actions">
       <button type="submit" form="artwork-form" class="button"><%= t("admin.artworks.form.save") %></button>
     </div>
-
-    <% details.each do |detail| %>
-      <%= form_with url: admin_artwork_detail_path(artwork, detail), method: :delete, id: dom_id(detail, :destroy), html: { hidden: true } do %>
-      <% end %>
-    <% end %>
   <% else %>
     <p class="empty-state"><%= t(".empty") %></p>
   <% end %>

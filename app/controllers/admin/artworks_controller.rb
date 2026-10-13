@@ -3,8 +3,9 @@ module Admin
   # slug, which is their to_param (/admin/artworks/obra-de-muestra-01/edit).
   class ArtworksController < BaseController
     include ImageUploads
+    include Reordering
 
-    before_action :set_artwork, only: %i[show edit update destroy]
+    before_action :set_artwork, only: %i[show edit update destroy move]
 
     def index
       @artworks = Artwork.ordered.with_attached_image.includes(:details)
@@ -45,6 +46,14 @@ module Admin
     def destroy
       @artwork.destroy!
       redirect_to admin_artworks_path, notice: t(".notice", title: @artwork.title), status: :see_other
+    end
+
+    # ↑ ↓ in the list. Back to the list it came from (/admin or /admin/artworks), so Turbo refreshes the
+    # page in place.
+    def move
+      direction = move_record(@artwork)
+      remember_moved(@artwork, direction)
+      redirect_back_or_to admin_artworks_path, notice: t(".#{direction}", title: @artwork.title), status: :see_other
     end
 
     private

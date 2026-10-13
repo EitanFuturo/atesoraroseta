@@ -38,7 +38,7 @@ class Admin::ArtworksTest < AdminSystemTestCase
     visit edit_admin_artwork_path(artwork)
 
     fill_in "Año", with: "2023-24"
-    click_on "Guardar cambios"
+    within("#artwork-form") { click_on "Guardar cambios" }
 
     assert_text "Cambios guardados."
     assert_field "Año", with: "2023–2024"
@@ -50,7 +50,7 @@ class Admin::ArtworksTest < AdminSystemTestCase
     visit edit_admin_artwork_path(artworks(:collage))
 
     fill_in "Año", with: "hacia 2020"
-    click_on "Guardar cambios"
+    within("#artwork-form") { click_on "Guardar cambios" }
 
     assert_selector ".error-summary", text: "Escribe un año (2024) o un periodo (2023–2024)"
     assert_selector "#artwork_years_error", text: "Escribe un año (2024) o un periodo (2023–2024)"

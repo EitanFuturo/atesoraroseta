@@ -8,6 +8,12 @@ import { configure as configureLexxy } from "lexxy"
 // Image fields upload each file straight to Active Storage, one request per file, before the form is sent.
 ActiveStorage.start()
 
+// Lists refresh in place (morphing) after ↑ ↓, and Turbo skips autofocus when it morphs. The arrow that
+// was pressed carries autofocus, so give it the focus back: a keyboard user can press it again.
+document.addEventListener("turbo:morph", () => {
+  document.querySelector("[autofocus]:not([disabled])")?.focus()
+})
+
 // The rich text editor (artwork descriptions and the Sobre mí text). The public pages style paragraphs,
 // bold, italic and links, so the editor keeps to those:
 // - no attachments (images belong in the image fields);

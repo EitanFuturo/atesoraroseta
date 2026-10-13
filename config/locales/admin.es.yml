@@ -24,6 +24,11 @@ es:
       preview_on_site: "Ver en la web (vista previa)"
       unpublished_on_site: "Ver en la web (sin publicar)"
       edit: "Editar"
+      move:
+        up: "Subir %{name} un puesto"
+        down: "Bajar %{name} un puesto"
+        up_title: "Subir"
+        down_title: "Bajar"
 
     records:
       published: "Publicada"
@@ -86,6 +91,7 @@ es:
           artwork: "Obra"
           status: "Estado"
           warnings: "Avisos"
+          order: "Orden"
           actions: "Acciones"
         details:
           one: "1 detalle"
@@ -131,6 +137,7 @@ es:
         add_hint: "Puedes elegir varias fotos a la vez: se añaden al final, en el orden en que las eliges."
         upload: "Subir los detalles"
         number: "Detalle %{number} de %{count}"
+        name: "el detalle %{number}"
         alt_hint: "Describe lo que se ve en cada detalle, para quien no puede verlo. Si lo dejas vacío, se usa el título de la obra con el número del detalle."
         alt_missing: "Falta el texto alternativo: ahora se usa «%{current}»."
         destroy: "Eliminar"
@@ -142,6 +149,9 @@ es:
         notice: "Cambios guardados."
       destroy:
         notice: "Obra «%{title}» eliminada."
+      move:
+        up: "«%{title}» ha subido un puesto."
+        down: "«%{title}» ha bajado un puesto."
 
     artwork_details:
       create:
@@ -154,6 +164,9 @@ es:
           other: "No se han podido añadir %{count} archivos:"
       destroy:
         notice: "Detalle eliminado."
+      move:
+        up: "El detalle ha subido un puesto."
+        down: "El detalle ha bajado un puesto."
 
   sessions:
     new:

@@ -21,11 +21,30 @@ class Admin::ArtworkDetailsControllerTest < ActionDispatch::IntegrationTest
       assert_select "input#artwork_details_attributes_0_alt[form=artwork-form][value=?]", artwork_details(:collage_first).alt
       assert_select "##{dom_id(artwork_details(:collage_second))} .warning",
         text: "Falta el texto alternativo: ahora se usa «Collage de prueba (2/2)»."
-      assert_select "button[form=?][data-turbo-confirm]", dom_id(artwork_details(:collage_second), :destroy)
+      assert_select "form[action=?][data-turbo-confirm] button", admin_artwork_detail_path(@artwork, artwork_details(:collage_second)),
+        text: "Eliminar Detalle 2 de 2"
+      assert_select "##{dom_id(artwork_details(:collage_first))} button[disabled]", text: "↑Subir el detalle 1 un puesto"
+      assert_select "##{dom_id(artwork_details(:collage_second))} button[disabled]", text: "↓Bajar el detalle 2 un puesto"
       assert_select "button[type=submit][form=artwork-form]", "Guardar cambios"
     end
-    assert_select "form##{dom_id(artwork_details(:collage_second), :destroy)}[hidden][action=?]",
-      admin_artwork_detail_path(@artwork, artwork_details(:collage_second))
+  end
+
+  test "moving a detail one place" do
+    patch move_admin_artwork_detail_path(@artwork, artwork_details(:collage_second)), params: { direction: "up" }
+
+    assert_redirected_to edit_admin_artwork_path(@artwork, anchor: dom_id(artwork_details(:collage_second)))
+    assert_equal "El detalle ha subido un puesto.", flash[:notice]
+    assert_equal [ artwork_details(:collage_second), artwork_details(:collage_first) ], @artwork.details.reload.to_a
+
+    patch move_admin_artwork_detail_path(@artwork, artwork_details(:collage_second)), params: { direction: "down" }
+    assert_equal "El detalle ha bajado un puesto.", flash[:notice]
+    assert_equal [ artwork_details(:collage_first), artwork_details(:collage_second) ], @artwork.details.reload.to_a
+  end
+
+  test "a move needs a known direction" do
+    patch move_admin_artwork_detail_path(@artwork, artwork_details(:collage_second)), params: { direction: "sideways" }
+
+    assert_response :bad_request
   end
 
   test "adding several details at once keeps the order they were chosen in, after the existing ones" do
