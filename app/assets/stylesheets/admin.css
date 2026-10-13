@@ -601,12 +601,20 @@ body.admin {
 
 .uploads li {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 120px auto;
+  grid-template-columns: 40px minmax(0, 1fr) 120px minmax(7rem, auto);
   align-items: center;
   gap: 4px 12px;
   padding: 6px 0;
   border-bottom: 1px solid var(--admin-line);
   font-size: 0.9rem;
+}
+
+.uploads__preview {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  background: #e9e7e2;
+  border-radius: 4px;
 }
 
 .uploads__name {
@@ -615,6 +623,17 @@ body.admin {
 
 .uploads progress {
   width: 120px;
+}
+
+@media (max-width: 600px) {
+  .uploads li {
+    grid-template-columns: 40px minmax(0, 1fr);
+  }
+
+  .uploads progress,
+  .uploads__status {
+    grid-column: 2;
+  }
 }
 
 .uploads__status--done {
@@ -638,6 +657,10 @@ body.admin {
   background: var(--admin-error-ground);
   border-radius: var(--admin-radius);
   font-weight: 600;
+}
+
+.upload-errors__line {
+  display: block;
 }
 
 /* Lists of records --------------------------------------------------------------------------------- */
