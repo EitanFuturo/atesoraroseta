@@ -1,62 +1,77 @@
-# Name of your application. Used to uniquely configure containers.
+# Kamal configuration for atesoraroseta.com. DEPLOY.md explains every step; replace the <PLACEHOLDERS>
+# first (part B).
+#
+# The droplet is shared with other projects. Each one is its own Kamal app behind the single kamal-proxy
+# that Kamal runs on ports 80 and 443, which routes every request by host name. To be a good neighbour,
+# this app has:
+# - unique names: the service atesoraroseta, the volume atesoraroseta_storage and the accessory
+#   atesoraroseta-litestream;
+# - no published host ports;
+# - per-app proxy options only, and no proxy/run section, which would reconfigure the proxy that every
+#   project on the server shares.
+
+# Name of the application. Used to uniquely configure containers.
 service: atesoraroseta
 
-# Name of the container image (use your-user/app-name on external registries).
-image: atesoraroseta
+# The image, in DigitalOcean Container Registry: registry.digitalocean.com/<REGISTRY_NAME>/atesoraroseta.
+image: <REGISTRY_NAME>/atesoraroseta
 
-# Deploy to these servers.
+# The droplet.
 servers:
   web:
-    - 192.168.0.1
-  # job:
-  #   hosts:
-  #     - 192.168.0.1
-  #   cmd: bin/jobs
+    - <DROPLET_IP>
 
-# Enable SSL auto certification via Let's Encrypt and allow for multiple apps on a single web server.
-# If used with Cloudflare, set encryption mode in SSL/TLS setting to "Full" to enable CF-to-app encryption.
-#
-# Using an SSL proxy like this requires turning on config.assume_ssl and config.force_ssl in production.rb!
-#
-# Don't use this when deploying to multiple web servers (then you have to terminate SSL at your load balancer).
-#
-# proxy:
-#   ssl: true
-#   host: app.example.com
+# kamal-proxy: HTTPS on both names with Let's Encrypt certificates (www.atesoraroseta.com answers with a
+# 301 to atesoraroseta.com, see lib/www_redirect.rb). These options apply to this app only.
+proxy:
+  ssl: true
+  hosts:
+    - atesoraroseta.com
+    - www.atesoraroseta.com
+  healthcheck:
+    path: /up
+  # Seconds a request may take, such as an admin save that analyses freshly uploaded images. Thruster in
+  # the container gets the same limit (HTTP_WRITE_TIMEOUT below); its default, 30, would cut it short.
+  response_timeout: 60
+  buffering:
+    # 30 MiB. The largest request is a direct upload: one image of at most 25 MiB
+    # (ImageAttachments::MAX_BYTES) sent as the raw request body. The other 5 MiB cover the multipart
+    # envelope and fields of a form that carries one such file. A file of 25 to 30 MiB still reaches the
+    # app and gets its Spanish "pesa más de 25 MB" error; anything larger can never be a valid image here.
+    max_request_body: 31457280
 
-# Where you keep your container images.
+# Where the images go. The username is the DigitalOcean account's email; the password is an API token with
+# read and write access to the registry, kept in the encrypted credentials (kamal.registry_password).
 registry:
-  # Alternatives: hub.docker.com / registry.digitalocean.com / ghcr.io / ...
-  server: localhost:5555
+  server: registry.digitalocean.com
+  username: <DIGITALOCEAN_EMAIL>
+  password:
+    - KAMAL_REGISTRY_PASSWORD
 
-  # Needed for authenticated registries.
-  # username: your-user
-
-  # Always use an access token rather than real password when possible.
-  # password:
-  #   - KAMAL_REGISTRY_PASSWORD
+# The backups bucket: this project's own private Spaces bucket. The app (BackupUploadsJob) and the
+# Litestream accessory both read these; the access keys are secrets (see .kamal/secrets).
+x-spaces: &spaces
+  SPACES_BUCKET: <SPACES_BUCKET>
+  SPACES_REGION: <SPACES_REGION>
+  SPACES_ENDPOINT: https://<SPACES_REGION>.digitaloceanspaces.com
 
 # Inject ENV variables into containers (secrets come from .kamal/secrets).
 env:
-  secret:
-    - RAILS_MASTER_KEY
   clear:
-    # Run the Solid Queue Supervisor inside the web server's Puma process to do jobs.
-    # When you start using multiple servers, you should split out job processing to a dedicated machine.
+    # The site's address: allowed hosts, the www redirect and absolute URLs (config/environments/production.rb).
+    APP_HOST: atesoraroseta.com
+
+    # Run the Solid Queue supervisor inside the web server's Puma process to do jobs: image variants and
+    # the nightly uploads backup (config/recurring.yml).
     SOLID_QUEUE_IN_PUMA: true
 
-    # Set number of processes dedicated to Solid Queue (default: 1)
-    # JOB_CONCURRENCY: 3
+    # Thruster's limit for a whole response, matching proxy/response_timeout.
+    HTTP_WRITE_TIMEOUT: 60
 
-    # Set number of cores available to the application on each server (default: 1).
-    # WEB_CONCURRENCY: 2
-
-    # Match this to any external database server to configure Active Record correctly
-    # Use atesoraroseta-db for a db accessory server on same machine via local kamal docker network.
-    # DB_HOST: 192.168.0.2
-
-    # Log everything from Rails
-    # RAILS_LOG_LEVEL: debug
+    <<: *spaces
+  secret:
+    # Decrypts config/credentials.yml.enc: the app reads the admin login and the Spaces keys from it.
+    - RAILS_MASTER_KEY
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
 # "bin/kamal logs -r job" will tail logs from the first server in the job section.
@@ -66,8 +81,8 @@ aliases:
   logs: app logs -f
   dbc: app exec --interactive --reuse "bin/rails dbconsole --include-password"
 
-# Use a persistent storage volume for sqlite database files and local Active Storage files.
-# Recommended to change this to a mounted volume path that is backed up off server.
+# The SQLite databases and the Active Storage files live in this Docker volume. Litestream and the nightly
+# uploads backup copy them to Spaces.
 volumes:
   - "atesoraroseta_storage:/rails/storage"
 
@@ -76,44 +91,36 @@ volumes:
 # version inside the asset_path.
 asset_path: /rails/public/assets
 
-# Configure the image builder.
+# Old containers (and their images) kept on the droplet for rollbacks: the running version plus two
+# previous ones. Kamal's default, 5, keeps more disk busy on a server other projects share.
+retain_containers: 3
+
+# Configure the image builder. The droplet is amd64 and this Mac is arm64: the image is built here, under
+# Docker Desktop's amd64 emulation, so the shared droplet never spends CPU, memory or disk on builds. To
+# build natively on the droplet instead (faster on a slow Mac, but it loads the server every project
+# shares), add: remote: ssh://root@<DROPLET_IP>
 builder:
   arch: amd64
 
-  # # Build image via remote server (useful for faster amd64 builds on arm64 computers)
-  # remote: ssh://docker@docker-builder-server
-  #
-  # # Pass arguments and secrets to the Docker build process
-  # args:
-  #   RUBY_VERSION: 4.0.7
-  # secrets:
-  #   - GITHUB_TOKEN
-  #   - RAILS_MASTER_KEY
-
-# Use a different ssh user than root
-# ssh:
-#   user: app
-
 # Use accessory services (secrets come from .kamal/secrets).
-# accessories:
-#   db:
-#     image: mysql:8.0
-#     host: 192.168.0.2
-#     # Change to 3306 to expose port to the world instead of just local network.
-#     port: "127.0.0.1:3306:3306"
-#     env:
-#       clear:
-#         MYSQL_ROOT_HOST: '%'
-#       secret:
-#         - MYSQL_ROOT_PASSWORD
-#     files:
-#       - config/mysql/production.cnf:/etc/mysql/my.cnf
-#       - db/production.sql:/docker-entrypoint-initdb.d/setup.sql
-#     directories:
-#       - data:/var/lib/mysql
-#   redis:
-#     image: valkey/valkey:8
-#     host: 192.168.0.2
-#     port: 6379
-#     directories:
-#       - data:/data
+accessories:
+  # Continuous replication of storage/production.sqlite3 to Spaces (config/litestream.yml). One process
+  # per server: the app's zero-downtime deploys briefly run two app containers, but never two of these.
+  litestream:
+    image: litestream/litestream:0.5.17
+    roles:
+      - web
+    cmd: replicate
+    files:
+      - config/litestream.yml:/etc/litestream.yml:ro
+    volumes:
+      - "atesoraroseta_storage:/rails/storage"
+    options:
+      # The app's user in the image, so the files Litestream writes next to the database stay the app's.
+      user: "1000:1000"
+    env:
+      clear:
+        <<: *spaces
+      secret:
+        - SPACES_ACCESS_KEY_ID
+        - SPACES_SECRET_ACCESS_KEY
