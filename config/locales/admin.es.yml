@@ -41,6 +41,7 @@ es:
       no_preview: "Sin imagen"
       dimensions: "%{width} × %{height} px"
       formats: "%{formats}, hasta %{max_megabytes} MB."
+      formats_each: "%{formats}, hasta %{max_megabytes} MB cada una."
       choose_hint: "Elige un archivo."
       replace_hint: "Para cambiarla, elige otro archivo."
       pending: "Imagen nueva, todavía sin guardar."
@@ -123,12 +124,36 @@ es:
           description: "Opcional. Un texto corto que sale junto a la obra."
           published: "Si está publicada, se ve en la web. Si no, solo tú puedes verla, como vista previa."
           image_alt: "Describe la obra para quien no puede verla (lectores de pantalla, buscadores). Si lo dejas vacío, se usa el título."
+      details:
+        heading: "Detalles"
+        intro: "Fotos de cerca de la obra. En la web salen en su página, debajo de la imagen principal, en este orden."
+        add: "Añadir detalles"
+        add_hint: "Puedes elegir varias fotos a la vez: se añaden al final, en el orden en que las eliges."
+        upload: "Subir los detalles"
+        number: "Detalle %{number} de %{count}"
+        alt_hint: "Describe lo que se ve en cada detalle, para quien no puede verlo. Si lo dejas vacío, se usa el título de la obra con el número del detalle."
+        alt_missing: "Falta el texto alternativo: ahora se usa «%{current}»."
+        destroy: "Eliminar"
+        destroy_confirm: "¿Eliminar el detalle %{number}? No se puede deshacer."
+        empty: "Esta obra no tiene detalles todavía."
       create:
         notice: "Obra «%{title}» creada. Ahora puedes añadirle fotos de detalle."
       update:
         notice: "Cambios guardados."
       destroy:
         notice: "Obra «%{title}» eliminada."
+
+    artwork_details:
+      create:
+        none: "Elige al menos una foto para añadir."
+        notice:
+          one: "Se ha añadido 1 detalle."
+          other: "Se han añadido %{count} detalles."
+        rejected:
+          one: "No se ha podido añadir 1 archivo:"
+          other: "No se han podido añadir %{count} archivos:"
+      destroy:
+        notice: "Detalle eliminado."
 
   sessions:
     new:

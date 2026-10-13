@@ -1,4 +1,4 @@
-<%= form_with model: [ :admin, artwork ], class: "form", html: { novalidate: true },
+<%= form_with model: [ :admin, artwork ], id: "artwork-form", class: "form", html: { novalidate: true },
       data: { unsaved_changes_main: true, controller: ("slug" if artwork.new_record?) } do |form| %>
   <%= render "admin/shared/error_summary", record: artwork, form: form %>
 

@@ -49,11 +49,12 @@ module Admin
 
     private
       def set_artwork
-        @artwork = Artwork.includes(:details).find_by!(slug: params[:id])
+        @artwork = Artwork.with_attached_image.includes(details: { image_attachment: :blob }).find_by!(slug: params[:id])
       end
 
       def artwork_params
-        attributes = params.expect(artwork: [ :title, :slug, :years, :medium, :dimensions, :description, :published, :image, :image_alt ])
+        attributes = params.expect(artwork: [ :title, :slug, :years, :medium, :dimensions, :description, :published, :image, :image_alt,
+          details_attributes: [ [ :id, :alt ] ] ])
         without_blank_images(attributes, :image)
       end
 

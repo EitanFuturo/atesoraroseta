@@ -1,0 +1,68 @@
+<%#
+  The work's detail photos, below its form. Adding photos is a form of its own (each file is uploaded and
+  becomes a detail right away). The alt fields belong to the work's form (form="artwork-form"), so one
+  "Guardar cambios" saves everything typed on the page. Eliminar (and ↑ ↓) use small forms rendered after
+  the list: forms can't nest.
+%>
+<% details = artwork.details %>
+<% title = artwork.attribute_in_database(:title) %>
+
+<section class="section" id="detalles" aria-labelledby="detalles-heading">
+  <h2 id="detalles-heading"><%= t(".heading") %> <span class="muted">(<%= details.size %>)</span></h2>
+  <p class="hint"><%= t(".intro") %></p>
+
+  <%= form_with url: admin_artwork_details_path(artwork), class: "upload-form" do |form| %>
+    <%= render "admin/shared/multi_upload_field", id: "detail_images", label: t(".add"), hint: t(".add_hint") %>
+    <%= form.submit t(".upload"), class: "button button--secondary" %>
+  <% end %>
+
+  <% if details.any? %>
+    <ol class="details">
+      <% details.each_with_index do |detail, index| %>
+        <% number = t(".number", number: index + 1, count: details.size) %>
+        <li class="detail" id="<%= dom_id(detail) %>">
+          <%= admin_thumbnail detail.image, large: true %>
+          <div class="detail__body">
+            <p class="detail__title"><%= number %></p>
+            <% if (dimensions = admin_image_dimensions(detail.image)) %>
+              <p class="dimensions"><%= dimensions %></p>
+            <% end %>
+            <% admin_image_warnings(detail.image).each do |warning| %>
+              <p class="warning"><%= warning %></p>
+            <% end %>
+
+            <%= fields_for "artwork[details_attributes][#{index}]", detail do |fields| %>
+              <%= fields.hidden_field :id, form: "artwork-form" %>
+              <div class="field">
+                <%= fields.label :alt, ArtworkDetail.human_attribute_name(:alt) %>
+                <%= fields.text_field :alt, form: "artwork-form", aria: { describedby: "details_alt_hint" } %>
+                <% if detail.attribute_in_database(:alt).blank? %>
+                  <p class="warning"><%= t(".alt_missing", current: "#{title} (#{index + 1}/#{details.size})") %></p>
+                <% end %>
+              </div>
+            <% end %>
+
+            <div class="detail__actions">
+              <button type="submit" form="<%= dom_id(detail, :destroy) %>" class="button button--danger button--small"
+                      data-turbo-confirm="<%= t(".destroy_confirm", number: index + 1) %>">
+                <%= t(".destroy") %><span class="visually-hidden"> <%= number %></span>
+              </button>
+            </div>
+          </div>
+        </li>
+      <% end %>
+    </ol>
+
+    <p class="hint" id="details_alt_hint"><%= t(".alt_hint") %></p>
+    <div class="form-actions">
+      <button type="submit" form="artwork-form" class="button"><%= t("admin.artworks.form.save") %></button>
+    </div>
+
+    <% details.each do |detail| %>
+      <%= form_with url: admin_artwork_detail_path(artwork, detail), method: :delete, id: dom_id(detail, :destroy), html: { hidden: true } do %>
+      <% end %>
+    <% end %>
+  <% else %>
+    <p class="empty-state"><%= t(".empty") %></p>
+  <% end %>
+</section>

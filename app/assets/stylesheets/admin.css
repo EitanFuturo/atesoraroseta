@@ -235,6 +235,16 @@ body.admin {
   border-radius: var(--admin-radius);
 }
 
+.flash p,
+.flash ul {
+  margin: 0;
+}
+
+.flash ul {
+  margin-top: 6px;
+  padding-left: 20px;
+}
+
 .flash--notice {
   background: var(--admin-ok-ground);
   border-color: var(--admin-ok);
@@ -698,6 +708,64 @@ body.admin {
 
 .upload-errors__line {
   display: block;
+}
+
+/* Details of a work ------------------------------------------------------------------------------ */
+
+.upload-form {
+  margin: 16px 0 0;
+  padding: 16px;
+  background: var(--admin-ground);
+  border-radius: var(--admin-radius);
+}
+
+.upload-form .field {
+  margin-bottom: 12px;
+}
+
+.details {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 24rem), 1fr));
+  gap: 16px;
+  margin: 20px 0 12px;
+  padding: 0;
+  list-style: none;
+}
+
+.detail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 12px 16px;
+  padding: 12px;
+  border: 1px solid var(--admin-line);
+  border-radius: var(--admin-radius);
+}
+
+.detail .thumb--large {
+  width: 128px;
+  height: 128px;
+}
+
+.detail__body {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
+.detail__title {
+  margin: 0;
+  font-weight: 700;
+}
+
+.detail .field {
+  margin: 10px 0 8px;
+}
+
+.detail__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
 }
 
 /* Lists of records --------------------------------------------------------------------------------- */

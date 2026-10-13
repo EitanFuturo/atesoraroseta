@@ -24,6 +24,9 @@ Rails.application.routes.draw do
     root "artworks#index"
 
     # Works are found by slug (Artwork#to_param); show redirects to edit.
-    resources :artworks
+    resources :artworks do
+      # Detail photos, on the work's edit page: several uploaded at once.
+      resources :details, controller: "artwork_details", only: %i[create destroy]
+    end
   end
 end
