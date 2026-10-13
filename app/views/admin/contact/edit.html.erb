@@ -1,0 +1,36 @@
+<% content_for :title, t(".title") %>
+
+<%= tag.div data: admin_unsaved_changes_data(dirty: @site.errors.any?) do %>
+  <div class="page-header">
+    <h1><%= t(".title") %></h1>
+    <div class="page-header__actions">
+      <%= admin_external_link t("admin.shared.view_on_site"), contact_path %>
+    </div>
+  </div>
+
+  <p class="page-intro"><%= t(".intro") %></p>
+
+  <%= form_with model: @site, url: admin_contact_path, method: :patch, id: "site-form", class: "form", html: { novalidate: true },
+        data: { unsaved_changes_main: true } do |form| %>
+    <%= render "admin/shared/error_summary", record: @site, form: form %>
+
+    <fieldset class="fieldset">
+      <legend><%= t(".contact") %></legend>
+      <%= admin_site_field form, :contact_headline %>
+      <%= admin_site_field form, :email, as: :email_field, autocomplete: "off" %>
+    </fieldset>
+
+    <fieldset class="fieldset">
+      <legend><%= t(".instagram") %></legend>
+      <%= admin_site_field form, :instagram_handle, autocomplete: "off", autocapitalize: "none", spellcheck: false %>
+      <% if @site.errors.none? && @site.instagram_url %>
+        <p class="hint instagram-link"><%= t(".instagram_link") %> <%= admin_external_link @site.instagram_url, @site.instagram_url %></p>
+      <% end %>
+      <%= admin_site_field form, :instagram_label %>
+    </fieldset>
+
+    <div class="form-actions">
+      <%= form.submit t("admin.site_settings.save"), class: "button" %>
+    </div>
+  <% end %>
+<% end %>

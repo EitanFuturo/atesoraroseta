@@ -239,6 +239,10 @@ es:
         about_contact_link_label: "El texto del enlace a Contacto, al final de la página."
         portrait: "En la web se recorta en vertical (4:5) desde el centro."
         portrait_alt: "Describe el retrato para quien no puede verlo. Si lo dejas vacío, el retrato se trata como decorativo."
+        contact_headline: "El titular grande de la página Contacto."
+        email: "Sale como enlace para escribirte. Si lo dejas vacío, no sale."
+        instagram_handle: "Sin @; también puedes pegar el enlace del perfil. Si lo dejas vacío, no sale."
+        instagram_label: "La palabra que sale encima de tu usuario de Instagram."
 
     about:
       edit:
@@ -247,6 +251,14 @@ es:
         text: "Texto"
         portrait: "Retrato"
         portrait_alt_missing: "Falta el texto alternativo del retrato."
+
+    contact:
+      edit:
+        title: "Contacto"
+        intro: "La página Contacto: un titular, tu correo y tu Instagram."
+        contact: "Titular y correo"
+        instagram: "Instagram"
+        instagram_link: "Ahora enlaza a"
 
   sessions:
     new:
