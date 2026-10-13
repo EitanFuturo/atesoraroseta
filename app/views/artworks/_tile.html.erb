@@ -1,0 +1,16 @@
+<%# One Obra tile: the work contained at its own proportions in a 4:5 cell. The frame's width and aspect
+    ratio are the only inline styles on public pages (without size metadata, a full-width 4:5 frame). %>
+<% image = ResponsiveImage.new(artwork.image) %>
+<% frame_style = image.dimensions? ? "width: #{image.frame_width_css}; aspect-ratio: #{image.aspect_ratio_css}" : "width: 100%; aspect-ratio: 4 / 5" %>
+<a class="work" href="<%= artwork_path(artwork) %>">
+  <figure class="work-frame" style="<%= frame_style %>">
+    <%= responsive_image_tag image, sizes: obra_tile_sizes(image), alt: artwork.alt_text, loading: loading,
+          fetchpriority: fetchpriority, class: "work-img" %>
+    <figcaption class="hover-label">
+      <span class="hover-title"><%= artwork.title %></span>
+      <% if (meta = artwork.meta_line) %>
+        <span class="hover-meta"><%= meta %></span>
+      <% end %>
+    </figcaption>
+  </figure>
+</a>

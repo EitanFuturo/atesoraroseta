@@ -1,0 +1,29 @@
+<% page_meta title: site.nav_torn_posters_label, description: site.torn_posters_intro, canonical: torn_posters_url %>
+<main class="main-posters">
+  <h1 class="visually-hidden"><%= site.nav_torn_posters_label %></h1>
+  <% if site.torn_posters_intro.present? %>
+    <p class="posters-intro"><%= site.torn_posters_intro %></p>
+  <% end %>
+  <% if @posters.any? %>
+    <div class="photo-grid">
+      <% sizes = poster_sizes %>
+      <% @posters.each_with_index do |poster, index| %>
+        <figure class="photo" id="<%= poster.anchor %>">
+          <%= responsive_image_tag ResponsiveImage.new(poster.image), sizes: sizes, alt: poster.alt_text,
+                loading: grid_loading(index, eager: ResponsiveImagesHelper::POSTER_EAGER_TILES),
+                fetchpriority: (:high if index.zero?), class: "photo-img" %>
+          <% if poster.labelled? %>
+            <figcaption class="hover-label">
+              <% if poster.place.present? %>
+                <span class="hover-title"><%= poster.place %></span>
+              <% end %>
+              <% if (meta = poster.meta_line) %>
+                <span class="hover-meta"><%= meta %></span>
+              <% end %>
+            </figcaption>
+          <% end %>
+        </figure>
+      <% end %>
+    </div>
+  <% end %>
+</main>
