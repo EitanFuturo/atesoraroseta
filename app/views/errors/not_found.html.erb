@@ -1,0 +1,13 @@
+<%# The 404, in the site's layout and built like Contacto: the status as a label, the title as the
+    page's heading, the text and a link home, all from the settings record. %>
+<% page_meta title: site.not_found_title %>
+<main class="main-contact">
+  <div class="contact">
+    <p class="label page-label">404</p>
+    <h1 class="contact-headline"><%= site.not_found_title %></h1>
+    <% if site.not_found_text.present? %>
+      <p class="not-found-text"><%= site.not_found_text %></p>
+    <% end %>
+    <%= link_to site.not_found_link_label, root_path, class: "text-link standalone-link" %>
+  </div>
+</main>
