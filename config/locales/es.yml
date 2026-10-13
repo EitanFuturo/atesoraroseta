@@ -10,12 +10,96 @@ es:
       session:
         one: "Sesión"
         other: "Sesiones"
+      artwork:
+        one: "Obra"
+        other: "Obras"
+      artwork_detail:
+        one: "Detalle"
+        other: "Detalles"
+      torn_poster:
+        one: "Foto de Torn Posters"
+        other: "Fotos de Torn Posters"
+      site:
+        one: "Ajustes del sitio"
+        other: "Ajustes del sitio"
     attributes:
       user:
         email_address: "Correo electrónico"
         password: "Contraseña"
         password_confirmation: "Confirmación de la contraseña"
+      artwork:
+        title: "Título"
+        slug: "Dirección (URL)"
+        years: "Año"
+        year: "Año"
+        year_end: "Año final"
+        medium: "Técnica"
+        dimensions: "Medidas"
+        description: "Descripción"
+        published: "Publicada"
+        position: "Posición"
+        image: "Imagen"
+        image_alt: "Texto alternativo"
+        details: "Detalles"
+      artwork_detail:
+        artwork: "Obra"
+        image: "Imagen"
+        alt: "Texto alternativo"
+        position: "Posición"
+      torn_poster:
+        place: "Lugar"
+        city: "Ciudad"
+        years: "Año"
+        year: "Año"
+        year_end: "Año final"
+        alt: "Texto alternativo"
+        published: "Publicada"
+        position: "Posición"
+        image: "Imagen"
+      # The admin labels from overview §4.3.
+      site:
+        wordmark: "Nombre (logotipo)"
+        nav_work_label: "Menú: Obra"
+        nav_torn_posters_label: "Menú: Torn Posters"
+        nav_about_label: "Menú: Sobre mí"
+        nav_contact_label: "Menú: Contacto"
+        torn_posters_intro: "Torn Posters: introducción"
+        details_label: "Etiqueta «Detalles»"
+        previous_label: "Etiqueta «Anterior»"
+        next_label: "Etiqueta «Siguiente»"
+        view_details_label: "Enlace a detalles (varios)"
+        view_detail_one_label: "Enlace a detalles (uno)"
+        year_label: "Etiqueta «Año»"
+        medium_label: "Etiqueta «Técnica»"
+        dimensions_label: "Etiqueta «Medidas»"
+        seo_description: "Descripción para buscadores"
+        og_image: "Imagen para redes sociales"
+        favicon: "Icono del sitio"
+        about_lead: "Sobre mí: frase principal"
+        about_body: "Sobre mí: texto"
+        portrait: "Retrato"
+        portrait_alt: "Texto alternativo del retrato"
+        about_contact_link_label: "Sobre mí: enlace a contacto"
+        contact_headline: "Contacto: titular"
+        email: "Correo electrónico"
+        instagram_handle: "Usuario de Instagram"
+        instagram_label: "Etiqueta «Instagram»"
+        not_found_title: "404: título"
+        not_found_text: "404: texto"
+        not_found_link_label: "404: enlace"
     errors:
+      messages:
+        # Images (read after the attribute name: "Imagen tiene un formato no admitido…").
+        image_missing: "es obligatoria"
+        image_content_type: "tiene un formato no admitido (usa %{formats})"
+        image_too_large: "pesa más de %{max_megabytes} MB"
+        # Years (shown on their own: see the "years" formats below).
+        years_unparsable: "Escribe un año (2024) o un periodo (2023–2024)"
+        years_out_of_range: "Los años deben estar entre %{first} y %{last}"
+        year_end_not_after_year: "El año final debe ser posterior al inicial"
+        year_end_without_year: "Falta el año inicial del periodo"
+        invalid_slug: "solo puede tener letras minúsculas sin acentos, números y guiones (por ejemplo, obra-azul)"
+        site_already_exists: "Los ajustes del sitio ya existen"
       models:
         user:
           attributes:
@@ -24,6 +108,16 @@ es:
               too_short:
                 one: "es demasiado corta (%{count} carácter mínimo)"
                 other: "es demasiado corta (%{count} caracteres mínimo)"
+        # Year errors are full sentences, so their full message is the message alone
+        # (needs config.active_model.i18n_customize_full_message).
+        artwork:
+          attributes:
+            years:
+              format: "%{message}"
+        torn_poster:
+          attributes:
+            years:
+              format: "%{message}"
 
   sessions:
     create:

@@ -1,0 +1,11 @@
+# The two details of artworks(:collage), in order.
+
+collage_first:
+  artwork: collage
+  position: 1
+  alt: "Detalle: borde rasgado con marcas de imprenta"
+
+# No alt text: falls back to "Collage de prueba (2/2)".
+collage_second:
+  artwork: collage
+  position: 2

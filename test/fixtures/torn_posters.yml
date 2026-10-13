@@ -1,0 +1,25 @@
+# Torn Posters order (position): street (1), wall (2), draft (3, unpublished).
+
+# Place, city and year; no alt text (falls back to "Calle de Toledo, Madrid").
+street:
+  place: "Calle de Toledo"
+  city: "Madrid"
+  year: 2024
+  published: true
+  position: 1
+
+# No place, a year range and its own alt text.
+wall:
+  city: "Lisboa"
+  year: 2019
+  year_end: 2020
+  alt: "Cartel arrancado en rojos y negros"
+  published: true
+  position: 2
+
+draft:
+  place: "Mercado Central"
+  city: "Valencia"
+  year: 2025
+  published: false
+  position: 3

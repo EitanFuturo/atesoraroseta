@@ -1,0 +1,42 @@
+# Obra order (position): collage (1), range (2), draft (3, unpublished), bare (4).
+# Published neighbours therefore skip the draft: range's next is bare.
+# Every artwork has an image (test/fixtures/active_storage) with analyzed width and height.
+
+# Everything filled in, with a description and two details.
+collage:
+  title: "Collage de prueba"
+  slug: collage-de-prueba
+  year: 2024
+  medium: "Carteles publicitarios arrancados sobre papel"
+  dimensions: "120 × 90 cm"
+  published: true
+  position: 1
+  image_alt: "Collage de prueba en azules y ocres"
+
+# A year range, no alt text (falls back to the title), no details.
+range:
+  title: "Obra con periodo"
+  slug: obra-con-periodo
+  year: 2022
+  year_end: 2023
+  medium: "Carteles arrancados sobre tabla"
+  dimensions: "60 × 40 cm"
+  published: true
+  position: 2
+
+# Unpublished: visitors get a 404, a signed-in admin can preview it.
+draft:
+  title: "Obra sin publicar"
+  slug: obra-sin-publicar
+  year: 2025
+  published: false
+  position: 3
+  image_alt: "Obra sin publicar"
+
+# Only a title and an image: no year, medium, dimensions, description or details.
+bare:
+  title: "Obra sin datos"
+  slug: obra-sin-datos
+  published: true
+  position: 4
+  image_alt: "Obra sin datos"

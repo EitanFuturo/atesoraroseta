@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_13_001548) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_13_005408) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -49,6 +49,31 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_13_001548) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "artwork_details", force: :cascade do |t|
+    t.integer "artwork_id", null: false
+    t.integer "position", null: false
+    t.string "alt"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["artwork_id", "position"], name: "index_artwork_details_on_artwork_id_and_position"
+  end
+
+  create_table "artworks", force: :cascade do |t|
+    t.string "title", null: false
+    t.string "slug", null: false
+    t.integer "year"
+    t.integer "year_end"
+    t.string "medium"
+    t.string "dimensions"
+    t.boolean "published", default: false, null: false
+    t.integer "position", null: false
+    t.string "image_alt"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["position"], name: "index_artworks_on_position"
+    t.index ["slug"], name: "index_artworks_on_slug", unique: true
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "ip_address"
@@ -56,6 +81,49 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_13_001548) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_sessions_on_user_id"
+  end
+
+  create_table "sites", force: :cascade do |t|
+    t.string "wordmark"
+    t.string "nav_work_label"
+    t.string "nav_torn_posters_label"
+    t.string "nav_about_label"
+    t.string "nav_contact_label"
+    t.text "torn_posters_intro"
+    t.string "details_label"
+    t.string "previous_label"
+    t.string "next_label"
+    t.string "view_details_label"
+    t.string "view_detail_one_label"
+    t.string "year_label"
+    t.string "medium_label"
+    t.string "dimensions_label"
+    t.text "seo_description"
+    t.text "about_lead"
+    t.string "portrait_alt"
+    t.string "about_contact_link_label"
+    t.string "contact_headline"
+    t.string "email"
+    t.string "instagram_handle"
+    t.string "instagram_label"
+    t.string "not_found_title"
+    t.text "not_found_text"
+    t.string "not_found_link_label"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "torn_posters", force: :cascade do |t|
+    t.string "place"
+    t.string "city"
+    t.integer "year"
+    t.integer "year_end"
+    t.string "alt"
+    t.boolean "published", default: false, null: false
+    t.integer "position", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["position"], name: "index_torn_posters_on_position"
   end
 
   create_table "users", force: :cascade do |t|
@@ -68,5 +136,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_13_001548) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "artwork_details", "artworks"
   add_foreign_key "sessions", "users"
 end

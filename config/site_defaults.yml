@@ -1,0 +1,38 @@
+# Default site texts (overview §4.3). They are defined only here:
+# - the seeds store them in the settings row in every environment;
+# - Site.current shows them while that row doesn't exist yet.
+# Blank means "not set yet". Never put bracketed placeholders here: these are the production values.
+
+wordmark: "atesoraroseta"
+
+nav_work_label: "Obra"
+nav_torn_posters_label: "Torn Posters"
+nav_about_label: "Sobre mí"
+nav_contact_label: "Contacto"
+
+torn_posters_intro: "Fotografías de carteles arrancados que inspiran la obra."
+
+details_label: "Detalles"
+previous_label: "Anterior"
+next_label: "Siguiente"
+view_details_label: "Ver los %{count} detalles"
+view_detail_one_label: "Ver el detalle"
+year_label: "Año"
+medium_label: "Técnica"
+dimensions_label: "Medidas"
+
+# Draft copy for the artist to approve; the SEO description starts as the same sentence.
+about_lead: &about_lead "Trabajo con fragmentos arrancados de carteles publicitarios: los recojo, los guardo y los vuelvo a componer."
+seo_description: *about_lead
+portrait_alt: ""
+about_contact_link_label: "Escríbeme"
+
+contact_headline: "Escríbeme"
+email: ""
+instagram_handle: ""
+instagram_label: "Instagram"
+
+# Draft copy.
+not_found_title: "Página no encontrada"
+not_found_text: "La página que buscas no existe o ha cambiado de dirección."
+not_found_link_label: "Volver a la obra"

@@ -1,0 +1,52 @@
+# Image sizes (from blobs.yml): collage 1179×1571 WebP with alpha; range, bare, collage_second, street,
+# draft poster 800×600 PNG; draft, collage_first, wall and the portrait 340×420 JPEG.
+
+collage_image:
+  name: image
+  record: collage (Artwork)
+  blob: collage_image_blob
+
+range_image:
+  name: image
+  record: range (Artwork)
+  blob: range_image_blob
+
+draft_image:
+  name: image
+  record: draft (Artwork)
+  blob: draft_image_blob
+
+bare_image:
+  name: image
+  record: bare (Artwork)
+  blob: bare_image_blob
+
+collage_first_image:
+  name: image
+  record: collage_first (ArtworkDetail)
+  blob: collage_first_image_blob
+
+collage_second_image:
+  name: image
+  record: collage_second (ArtworkDetail)
+  blob: collage_second_image_blob
+
+street_image:
+  name: image
+  record: street (TornPoster)
+  blob: street_image_blob
+
+wall_image:
+  name: image
+  record: wall (TornPoster)
+  blob: wall_image_blob
+
+draft_poster_image:
+  name: image
+  record: draft (TornPoster)
+  blob: draft_poster_image_blob
+
+site_portrait:
+  name: portrait
+  record: main (Site)
+  blob: site_portrait_blob

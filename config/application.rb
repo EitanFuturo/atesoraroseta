@@ -40,6 +40,10 @@ module Atesoraroseta
     config.i18n.default_locale = :es
     config.i18n.available_locales = [ :es ]
 
+    # Lets a locale give an attribute its own full-message format, so the "Año" errors read as
+    # whole sentences ("Escribe un año (2024) o un periodo (2023–2024)") instead of "Año Escribe…".
+    config.active_model.i18n_customize_full_message = true
+
     # Serve Active Storage files through the app: stable URLs with far-future cache headers,
     # instead of expiring redirect URLs. Variants use libvips (the 8.1 default, :vips).
     config.active_storage.resolve_model_to_route = :rails_storage_proxy

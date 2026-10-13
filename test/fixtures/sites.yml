@@ -1,0 +1,11 @@
+# The settings row: the production defaults (config/site_defaults.yml) plus an email, an Instagram handle,
+# an about body (action_text/rich_texts.yml) and a portrait (active_storage). No social image or favicon,
+# so the fallbacks apply. Delete the row (Site.delete_all) to test Site.current without one.
+
+main:
+<% Site::DEFAULTS.except("email", "instagram_handle", "portrait_alt").each do |column, value| %>
+  <%= column %>: <%= value.to_json %>
+<% end %>
+  email: "hola@example.com"
+  instagram_handle: "atesoraroseta"
+  portrait_alt: "Retrato de prueba de la artista en el taller"

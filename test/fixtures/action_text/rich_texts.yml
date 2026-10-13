@@ -1,4 +1,9 @@
-# one:
-#   record: name_of_fixture (ClassOfFixture)
-#   name: content
-#   body: <p>In a <i>million</i> stars!</p>
+collage_description:
+  record: collage (Artwork)
+  name: description
+  body: "<p>Texto de prueba sobre la obra: de qué calle salieron los carteles y qué capas asoman.</p>"
+
+site_about_body:
+  record: main (Site)
+  name: about_body
+  body: "<p>Primer párrafo de prueba sobre la artista.</p><p>Segundo párrafo de prueba sobre el proceso.</p>"

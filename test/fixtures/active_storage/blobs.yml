@@ -1,0 +1,29 @@
+# One blob per attachment (test/fixtures/files), uploaded to the test service when fixtures load.
+# Each carries the metadata analysis would give (identified, width, height, analyzed), so views can
+# render width/height and srcset without running analysis. No variants are processed.
+<%
+  sizes = {
+    "obra-01.webp" => [ 1179, 1571 ],   # cut out on transparency (4 bands)
+    "obra-01-d5.jpg" => [ 340, 420 ],
+    "small.png" => [ 800, 600 ]
+  }
+  blob = ->(filename) do
+    width, height = sizes.fetch(filename)
+    ActiveStorage::FixtureSet.blob(filename: filename,
+      metadata: { identified: true, width: width, height: height, analyzed: true })
+  end
+%>
+
+collage_image_blob: <%= blob.("obra-01.webp") %>
+range_image_blob: <%= blob.("small.png") %>
+draft_image_blob: <%= blob.("obra-01-d5.jpg") %>
+bare_image_blob: <%= blob.("small.png") %>
+
+collage_first_image_blob: <%= blob.("obra-01-d5.jpg") %>
+collage_second_image_blob: <%= blob.("small.png") %>
+
+street_image_blob: <%= blob.("small.png") %>
+wall_image_blob: <%= blob.("obra-01-d5.jpg") %>
+draft_poster_image_blob: <%= blob.("small.png") %>
+
+site_portrait_blob: <%= blob.("obra-01-d5.jpg") %>
