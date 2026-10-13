@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <title><%= admin_page_title %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <%# Never show a cached copy of an admin page: it may hold data that has changed since. %>
+    <meta name="turbo-cache-control" content="no-cache">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= yield :head %>
+    <link rel="icon" href="data:,">
+    <%# By name: the editor's stylesheet and the panel's own, never the public site's. %>
+    <%= stylesheet_link_tag "lexxy", "admin", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="admin">
+    <a class="skip-link" href="#contenido"><%= t("admin.layout.skip_link") %></a>
+
+    <header class="admin-header">
+      <div class="admin-header__inner">
+        <p class="admin-brand"><%= admin_site.wordmark %> <span class="admin-brand__panel"><%= t("admin.layout.brand") %></span></p>
+
+        <% if authenticated? %>
+          <nav class="admin-nav" aria-label="<%= t("admin.layout.nav.label") %>">
+            <ul>
+              <% admin_nav_items.each do |label, path, section| %>
+                <li><%= admin_nav_link label, path, section %></li>
+              <% end %>
+              <li><%= admin_external_link t("admin.layout.nav.view_site"), root_path %></li>
+              <li><%= button_to t("admin.layout.nav.sign_out"), session_path, method: :delete, class: "link-button" %></li>
+            </ul>
+          </nav>
+        <% end %>
+      </div>
+    </header>
+
+    <main id="contenido" class="admin-main" tabindex="-1">
+      <%= render "admin/shared/flash" %>
+      <%= yield %>
+    </main>
+  </body>
+</html>

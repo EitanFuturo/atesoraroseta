@@ -29,13 +29,15 @@ module Authentication
       Session.find_by(id: cookies.signed[:session_id]) if cookies.signed[:session_id]
     end
 
+    # Only a page (GET, or HEAD, which is routed like GET) is worth returning to after logging in:
+    # repeating a form submission as a GET would land on a route that doesn't exist.
     def request_authentication
-      session[:return_to_after_authenticating] = request.url
+      session[:return_to_after_authenticating] = request.url if request.get? || request.head?
       redirect_to new_session_path
     end
 
     def after_authentication_url
-      session.delete(:return_to_after_authenticating) || root_url
+      session.delete(:return_to_after_authenticating) || admin_root_url
     end
 
     def start_new_session_for(user)

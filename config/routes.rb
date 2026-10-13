@@ -22,5 +22,7 @@ Rails.application.routes.draw do
   # The back office: every route here requires login.
   namespace :admin do
     root "artworks#index"
+
+    resources :artworks, only: :index
   end
 end
