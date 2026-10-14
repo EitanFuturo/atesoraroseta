@@ -13,3 +13,9 @@ production:
   clear_solid_queue_finished_jobs:
     command: "SolidQueue::Job.clear_finished_in_batches(sleep_between_batches: 0.3)"
     schedule: every hour at minute 12
+
+  # Copies the uploaded files that Spaces doesn't have yet to the backups bucket (never deletes).
+  # The app's time zone is UTC, so the schedule names its own: 03:30 in Madrid, all year round.
+  backup_uploads:
+    class: BackupUploadsJob
+    schedule: every day at 3:30am Europe/Madrid

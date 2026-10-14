@@ -49,3 +49,11 @@
 # Ignore Docker-related files
 /.dockerignore
 /Dockerfile*
+
+# Ignore what production never reads: the design sources (the development seeds' sample images included),
+# plans and handoff notes, the tests, screenshots, and agent worktrees.
+/design
+/docs
+/test
+/tmp/screenshots
+/.claude

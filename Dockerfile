@@ -14,7 +14,9 @@ FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
 # Rails app lives here
 WORKDIR /rails
 
-# Install base packages
+# Install base packages. libvips (8.16 on Debian 13) reads JPEG, PNG and WebP, and AVIF through libheif,
+# whose dav1d decoder plugin Debian 13 installs as a hard dependency, so ImageAttachments.avif_supported?
+# is true in this image and the admin accepts AVIF uploads.
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y curl libjemalloc2 libvips sqlite3 && \
     ln -s /usr/lib/$(uname -m)-linux-gnu/libjemalloc.so.2 /usr/local/lib/libjemalloc.so && \

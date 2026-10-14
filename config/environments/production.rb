@@ -1,4 +1,6 @@
 require "active_support/core_ext/integer/time"
+# Environment files run before autoloading is set up, so the middleware used below is required here.
+require_relative "../../lib/www_redirect"
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
@@ -21,17 +23,34 @@ Rails.application.configure do
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
 
-  # Store uploaded files on the local file system (see config/storage.yml for options).
+  # Store uploaded files on the local file system (see config/storage.yml for options). In production
+  # storage/ is the Docker volume atesoraroseta_storage; BackupUploadsJob copies the files to Spaces nightly.
   config.active_storage.service = :local
 
-  # Assume all access to the app is happening through a SSL-terminating reverse proxy.
-  # config.assume_ssl = true
+  # kamal-proxy terminates SSL (Let's Encrypt) and talks plain HTTP to the app.
+  config.assume_ssl = true
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # config.force_ssl = true
+  # Because of assume_ssl every request counts as HTTPS, so kamal-proxy's health checks on /up, which
+  # arrive over plain HTTP, are not redirected and need no exclusion.
+  config.force_ssl = true
 
-  # Skip http-to-https redirect for the default health check endpoint.
-  # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
+  # The site's address, atesoraroseta.com (APP_HOST in config/deploy.yml). Without it, as in a one-off
+  # container that serves no requests, any host is accepted and nothing is redirected.
+  if (app_host = ENV["APP_HOST"].presence)
+    # Only requests for the site's two names reach the app (protection against DNS rebinding and forged
+    # Host headers), except kamal-proxy's health checks, which address the container directly.
+    config.hosts = [ app_host, "www.#{app_host}" ]
+    config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+
+    # www.<APP_HOST> answers with a 301 to the same path on APP_HOST, the canonical address.
+    config.middleware.insert_after ActionDispatch::SSL, WwwRedirect, host: app_host
+
+    # Absolute URLs built outside a request (jobs, the console) use the canonical address too.
+    # Inside a request they use the request's host, which is APP_HOST once www is redirected.
+    Rails.application.routes.default_url_options = { host: app_host, protocol: "https" }
+    config.action_mailer.default_url_options = { host: app_host, protocol: "https" }
+  end
 
   # Log to STDOUT with the current request id as a default log tag.
   config.log_tags = [ :request_id ]
@@ -50,24 +69,12 @@ Rails.application.configure do
   config.cache_store = :solid_cache_store
 
   # Replace the default in-process and non-durable queuing backend for Active Job.
+  # The jobs run inside Puma (SOLID_QUEUE_IN_PUMA in config/deploy.yml, see config/puma.rb), including the
+  # recurring ones in config/recurring.yml such as the nightly uploads backup.
   config.active_job.queue_adapter = :solid_queue
   config.solid_queue.connects_to = { database: { writing: :queue } }
 
-  # Ignore bad email addresses and do not raise email delivery errors.
-  # Set this to true and configure the email server for immediate delivery to raise delivery errors.
-  # config.action_mailer.raise_delivery_errors = false
-
-  # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "example.com" }
-
-  # Specify outgoing SMTP server. Remember to add smtp/* credentials via bin/rails credentials:edit.
-  # config.action_mailer.smtp_settings = {
-  #   user_name: Rails.application.credentials.dig(:smtp, :user_name),
-  #   password: Rails.application.credentials.dig(:smtp, :password),
-  #   address: "smtp.example.com",
-  #   port: 587,
-  #   authentication: :plain
-  # }
+  # Nothing in this app sends email: no password recovery and no notifications, so there is no SMTP.
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
@@ -78,13 +85,4 @@ Rails.application.configure do
 
   # Only use :id for inspections in production.
   config.active_record.attributes_for_inspect = [ :id ]
-
-  # Enable DNS rebinding protection and other `Host` header attacks.
-  # config.hosts = [
-  #   "example.com",     # Allow requests from example.com
-  #   /.*\.example\.com/ # Allow requests from subdomains like `www.example.com`
-  # ]
-  #
-  # Skip DNS rebinding protection for the default health check endpoint.
-  # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 end

@@ -1,8 +1,11 @@
 #!/bin/bash -e
 
-# If running the rails server then create or migrate existing database
+# If running the rails server then create or migrate existing database, then create or update the admin
+# user from the encrypted credentials (admin.email, admin.password; ADMIN_EMAIL / ADMIN_PASSWORD override
+# them). admin:sync only warns when there is nothing to sync, and the site starts even if it fails.
 if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
   ./bin/rails db:prepare
+  ./bin/rails admin:sync || echo "bin/docker-entrypoint: admin:sync failed; starting the server anyway." >&2
 fi
 
 exec "${@}"
