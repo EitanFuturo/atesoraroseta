@@ -154,6 +154,15 @@ class Admin::ArtworksControllerTest < ActionDispatch::IntegrationTest
     assert_equal "collage-de-prueba-2", Artwork.order(:id).last.slug
   end
 
+  test "a slug filled from a title with underscores gets -2 when it is taken" do
+    # The slug field turns the title's underscores into hyphens, like Artwork.slug_from.
+    post admin_artworks_path, params: { artwork: {
+      title: "collage_de_prueba", slug: "collage-de-prueba", image: fixture_file_upload("small.png", "image/png")
+    } }
+
+    assert_equal "collage-de-prueba-2", Artwork.order(:id).last.slug
+  end
+
   test "a slug typed by hand that is taken is refused" do
     assert_no_difference -> { Artwork.count } do
       post admin_artworks_path, params: { artwork: {

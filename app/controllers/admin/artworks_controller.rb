@@ -75,7 +75,7 @@ module Admin
       # hand is kept as it is.
       def artwork_params_for_create
         attributes = artwork_params
-        attributes[:slug] = "" if attributes[:slug].present? && attributes[:slug] == attributes[:title].to_s.parameterize
+        attributes[:slug] = "" if attributes[:slug].present? && attributes[:slug] == Artwork.slug_from(attributes[:title])
         attributes
       end
   end

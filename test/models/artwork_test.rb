@@ -36,6 +36,16 @@ class ArtworkTest < ActiveSupport::TestCase
   test "falls back to a generic slug when the title has no letters or digits" do
     assert_equal "obra", create_artwork(title: "¿?").slug
     assert_equal "obra-2", create_artwork(title: "—").slug
+    assert_equal "obra-3", create_artwork(title: "___").slug
+  end
+
+  test "underscores in the title become hyphens in the slug" do
+    assert_equal "obra-azul", create_artwork(title: "obra_azul").slug
+    assert_equal "obra-azul-2", create_artwork(title: "_Obra_ azul_").slug
+
+    artwork = artworks(:collage)
+    artwork.update!(title: "Collage_rojo", slug: "")
+    assert_equal "collage-rojo", artwork.slug
   end
 
   test "editing the title never changes the slug" do

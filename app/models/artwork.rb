@@ -31,6 +31,13 @@ class Artwork < ApplicationRecord
   scope :ordered, -> { order(:position).order(YearRange.sort_year_node(arel_table).desc).order(:id) }
   scope :missing_alt, -> { where(image_alt: [ nil, "" ]) }
 
+  # The slug a title gives, before it is made unique: Rails' parameterize, with underscores (which it keeps
+  # and SLUG_FORMAT refuses) turned into hyphens, as the admin's slug field does (slug_controller.js).
+  # Blank when the title has no letters or digits.
+  def self.slug_from(title)
+    title.to_s.parameterize.tr("_", "-").squeeze("-").delete_prefix("-").delete_suffix("-")
+  end
+
   # Public URLs use the stored slug: artwork_path(artwork) is "/obra/<slug>".
   # The stored value, so a form re-rendered with an invalid new slug still posts to a working URL.
   def to_param
@@ -83,7 +90,7 @@ class Artwork < ApplicationRecord
 
   private
     def generate_slug
-      base = title.to_s.parameterize.presence || FALLBACK_SLUG
+      base = self.class.slug_from(title).presence || FALLBACK_SLUG
       candidate = base
       suffix = 1
 
