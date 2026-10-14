@@ -45,6 +45,10 @@ class KamalConfigTest < ActiveSupport::TestCase
     end
   end
 
+  test "the app's memory is capped, so it can't starve the other projects on the 1 GB droplet" do
+    assert_includes app_command.run(hostname: "test").join(" "), '--memory "600m"'
+  end
+
   test "the app gets its address, the jobs in Puma and the Spaces settings; its only secret is the master key" do
     clear = @role.env(@host).clear
 
