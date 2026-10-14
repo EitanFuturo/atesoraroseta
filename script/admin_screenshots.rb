@@ -1,4 +1,4 @@
-# Screenshots of every admin screen, at 1280 and 800 px wide, into tmp/screenshots/admin/.
+# Screenshots of every admin screen, at 1280 and 800 px wide, into tmp/page-screenshots/admin/.
 #
 #   bin/rails server -p 3004                      # in another terminal, with the development seeds loaded
 #   bin/rails runner script/admin_screenshots.rb
@@ -6,13 +6,13 @@
 # Environment variables: PORT (3004), WIDTHS ("1280,800"), ONLY (names, e.g. "03-obras,07-torn-posters").
 # It logs in as a throwaway user with a random password, never printed, and deletes that user at the end.
 #
-# Rails' tmp:clear (run by bin/setup, and so by bin/ci) can't delete a folder inside tmp/screenshots:
-# delete tmp/screenshots/admin before running them.
+# Not tmp/screenshots, like bin/screenshots: that folder holds the system tests' failure screenshots, and
+# Rails' tmp:clear (run by bin/setup, and so by bin/ci) fails on any folder inside it.
 require "capybara"
 require "selenium-webdriver"
 
 module AdminScreenshots
-  OUTPUT = Rails.root.join("tmp/screenshots/admin")
+  OUTPUT = Rails.root.join("tmp/page-screenshots/admin")
   WIDTHS = ENV.fetch("WIDTHS", "1280,800").split(",").map(&:to_i)
   ONLY = ENV["ONLY"]&.split(",")
 
