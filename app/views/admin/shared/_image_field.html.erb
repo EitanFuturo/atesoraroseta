@@ -22,9 +22,9 @@
 <%= tag.div class: [ "field", "image-field", ("field--invalid" if errors.any?) ], data: admin_upload_data do %>
   <%= form.label attribute, admin_label_text(form, attribute, local_assigns[:label], required) %>
   <p class="hint" id="<%= hint_id %>">
+    <%= local_assigns[:hint] %>
     <%= shown&.attached? ? t("admin.images.replace_hint") : t("admin.images.choose_hint") %>
     <%= admin_image_formats_hint %>
-    <%= local_assigns[:hint] %>
   </p>
 
   <% if shown&.attached? %>
@@ -50,9 +50,12 @@
     <%= form.hidden_field attribute, value: attachment.blob.signed_id, id: nil %>
   <% end %>
 
-  <%= form.file_field attribute, accept: admin_image_accept, direct_upload: true,
-        data: { upload_target: "input", action: "upload#check" },
-        aria: { describedby: [ hint_id, (error_id if errors.any?) ].compact.join(" "), invalid: (true if errors.any?) }.compact %>
+  <div class="file-picker">
+    <%= form.file_field attribute, accept: admin_image_accept, direct_upload: true, class: "file-picker__input",
+          data: { upload_target: "input", action: "upload#check" },
+          aria: { describedby: [ hint_id, (error_id if errors.any?) ].compact.join(" "), invalid: (true if errors.any?) }.compact %>
+    <span class="button button--secondary file-picker__button" aria-hidden="true"><%= t("admin.images.choose_file") %></span>
+  </div>
   <p class="upload-errors" data-upload-target="errors" role="alert"></p>
   <ul class="uploads" data-upload-target="list" aria-live="polite"></ul>
 

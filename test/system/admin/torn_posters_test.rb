@@ -6,7 +6,7 @@ class Admin::TornPostersTest < AdminSystemTestCase
   test "uploading several photos at once and publishing them" do
     visit admin_torn_posters_path
 
-    attach_file "Fotos", [ file_fixture("small.png"), file_fixture("obra-01-d5.jpg") ]
+    attach_file "Fotos", [ file_fixture("small.png"), file_fixture("obra-01-d5.jpg") ], make_visible: true
     assert_selector ".uploads li .uploads__status", text: "Lista para subir", count: 2
     click_on "Subir las fotos"
 

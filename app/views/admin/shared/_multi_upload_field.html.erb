@@ -6,8 +6,11 @@
 <%= tag.div class: "field image-field", data: admin_upload_data do %>
   <%= label_tag id, label %>
   <p class="hint" id="<%= id %>_hint"><%= hint %> <%= t("admin.images.formats_each", formats: ImageAttachments.format_names, max_megabytes: ImageAttachments::MAX_BYTES / 1.megabyte) %></p>
-  <%= file_field_tag "images[]", id: id, multiple: true, accept: admin_image_accept, direct_upload: true,
-        data: { upload_target: "input", action: "upload#check" }, aria: { describedby: "#{id}_hint" } %>
+  <div class="file-picker">
+    <%= file_field_tag "images[]", id: id, multiple: true, accept: admin_image_accept, direct_upload: true, class: "file-picker__input",
+          data: { upload_target: "input", action: "upload#check" }, aria: { describedby: "#{id}_hint" } %>
+    <span class="button button--secondary file-picker__button" aria-hidden="true"><%= t("admin.images.choose_files") %></span>
+  </div>
   <p class="upload-errors" data-upload-target="errors" role="alert"></p>
   <ul class="uploads" data-upload-target="list" aria-live="polite"></ul>
 <% end %>

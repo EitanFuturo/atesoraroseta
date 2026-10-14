@@ -13,7 +13,7 @@ class Admin::ArtworksTest < AdminSystemTestCase
     assert_rich_text_editor "artwork_description"
     fill_in_rich_text "artwork_description", with: "Un texto corto sobre la obra."
     check "Publicada"
-    attach_file "Imagen", file_fixture("obra-01.webp")
+    attach_file "Imagen", file_fixture("obra-01.webp"), make_visible: true
     assert_selector ".uploads li .uploads__name", text: "obra-01.webp"
     assert_selector ".uploads li .uploads__status", text: "Lista para subir"
     fill_in "Texto alternativo", with: "Collage en azules y ocres"
@@ -59,7 +59,7 @@ class Admin::ArtworksTest < AdminSystemTestCase
   test "a file that isn't an image is refused in Spanish before uploading" do
     visit new_admin_artwork_path
 
-    attach_file "Imagen", file_fixture("not-an-image.txt")
+    attach_file "Imagen", file_fixture("not-an-image.txt"), make_visible: true
 
     assert_selector ".upload-errors", text: "«not-an-image.txt» no es una imagen JPEG, PNG o WebP: no se subirá."
     assert_no_selector ".uploads li"
@@ -71,7 +71,7 @@ class Admin::ArtworksTest < AdminSystemTestCase
     File.truncate(path, 26.megabytes)
     visit new_admin_artwork_path
 
-    attach_file "Imagen", path
+    attach_file "Imagen", path, make_visible: true
 
     assert_selector ".upload-errors", text: "«enorme.png» pesa 26 MB y el máximo es 25 MB: no se subirá."
     assert_equal 0, page.evaluate_script("document.getElementById('artwork_image').files.length")
@@ -83,7 +83,7 @@ class Admin::ArtworksTest < AdminSystemTestCase
     visit new_admin_artwork_path
 
     fill_in "Título", with: "Obra con archivo raro"
-    attach_file "Imagen", path
+    attach_file "Imagen", path, make_visible: true
     click_on "Crear la obra"
 
     assert_selector ".error-summary", text: "Imagen tiene un formato no admitido (usa JPEG, PNG o WebP)"

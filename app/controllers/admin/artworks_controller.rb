@@ -27,6 +27,9 @@ module Admin
         redirect_to edit_admin_artwork_path(@artwork), notice: t(".notice", title: @artwork.title), status: :see_other
       else
         discard_rejected_image(@artwork, :image)
+        # Show the slug as it was sent, not the one validation generated: a slug generated from a blank
+        # title ("obra") would otherwise look typed by hand and stop following the title.
+        @artwork.slug = params.dig(:artwork, :slug).to_s
         render :new, status: :unprocessable_content
       end
     end

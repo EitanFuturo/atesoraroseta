@@ -295,6 +295,7 @@ body.admin {
 /* Buttons and links ---------------------------------------------------------------------------- */
 
 .button,
+.admin a.button,
 .admin button.button,
 .admin input[type="submit"].button {
   display: inline-flex;
@@ -320,6 +321,7 @@ body.admin {
 }
 
 .button--secondary,
+.admin a.button--secondary,
 .admin button.button--secondary {
   color: var(--admin-ink);
   background: var(--admin-surface);
@@ -429,6 +431,7 @@ body.admin {
 }
 
 .field > label,
+.field > .field_with_errors > label,
 .field-label {
   display: block;
   margin-bottom: 4px;
@@ -473,6 +476,36 @@ body.admin {
   display: block;
   max-width: 100%;
   font: inherit;
+}
+
+/* A Spanish "Elegir archivo" button: the browser's own file control (whose text follows the browser's
+   language) lies on top of it, transparent, so clicking and dropping files still reach it. */
+.file-picker {
+  position: relative;
+  display: inline-flex;
+}
+
+.admin .file-picker__input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.file-picker__input:focus-visible + .file-picker__button {
+  outline: 3px solid var(--admin-focus);
+  outline-offset: 2px;
+}
+
+.file-picker:hover .file-picker__button {
+  background: var(--admin-ground);
+  border-color: var(--admin-ink);
+}
+
+.field--invalid .file-picker__button {
+  border-color: var(--admin-error);
 }
 
 .admin input[aria-invalid="true"],
@@ -907,6 +940,7 @@ body.admin {
   display: block;
   margin-top: 4px;
   font-size: 0.8rem;
+  white-space: nowrap;
 }
 
 .bulk-table__published input {

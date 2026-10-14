@@ -23,7 +23,7 @@
 
       <%= render "admin/shared/image_field", form: form, attribute: :image, required: true %>
 
-      <%= admin_field form, :alt, hint: t("admin.torn_posters.index.alt_hint") do |aria| %>
+      <%= admin_field form, :alt, hint: t(".alt_hint") do |aria| %>
         <%= form.text_field :alt, aria: aria %>
         <% if (warning = admin_poster_alt_warning(@poster)) %>
           <p class="warning"><%= warning %></p>
@@ -42,7 +42,7 @@
         <%= form.text_field :city, aria: aria %>
       <% end %>
 
-      <%= admin_field form, :years, hint: t("admin.torn_posters.index.years_hint") do |aria| %>
+      <%= admin_field form, :years, hint: t(".years_hint") do |aria| %>
         <%= form.text_field :years, aria: aria, autocomplete: "off", class: "input-short" %>
       <% end %>
 

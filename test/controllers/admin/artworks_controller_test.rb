@@ -130,6 +130,22 @@ class Admin::ArtworksControllerTest < ActionDispatch::IntegrationTest
     assert_select "[data-unsaved-changes-dirty-value=true]"
   end
 
+  test "a form that comes back with errors shows the slug as it was sent, not one generated from a blank title" do
+    post admin_artworks_path, params: { artwork: { title: "", slug: "" } }
+
+    assert_response :unprocessable_content
+    assert_select "input#artwork_slug[data-slug-target=slug][value='']"
+    assert_select "input#artwork_slug[value=obra]", count: 0
+  end
+
+  test "image fields offer a Spanish file button over the browser's own control" do
+    get new_admin_artwork_path
+
+    assert_select ".file-picker input[type=file].file-picker__input#artwork_image"
+    assert_select ".file-picker .file-picker__button[aria-hidden=true]", "Elegir archivo"
+    assert_select "#artwork_image_hint", "Elige un archivo: JPEG, PNG o WebP, hasta 25 MB."
+  end
+
   test "a slug filled from the title gets -2 when it is taken" do
     post admin_artworks_path, params: { artwork: {
       title: "Collage de prueba", slug: "collage-de-prueba", image: fixture_file_upload("small.png", "image/png")

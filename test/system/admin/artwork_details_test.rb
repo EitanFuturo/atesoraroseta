@@ -7,7 +7,7 @@ class Admin::ArtworkDetailsTest < AdminSystemTestCase
     visit edit_admin_artwork_path(@artwork)
 
     within "#detalles" do
-      attach_file "Añadir detalles", [ file_fixture("obra-01-d5.jpg"), file_fixture("small.png") ]
+      attach_file "Añadir detalles", [ file_fixture("obra-01-d5.jpg"), file_fixture("small.png") ], make_visible: true
       assert_selector ".uploads li", count: 2
       assert_selector ".uploads li .uploads__status", text: "Lista para subir", count: 2
       click_on "Subir los detalles"

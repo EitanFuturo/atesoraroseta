@@ -8,7 +8,7 @@ class Admin::AboutTest < AdminSystemTestCase
     fill_in "Sobre mí: frase principal", with: "Recojo carteles arrancados y los vuelvo a componer."
     assert_rich_text_editor "site_about_body"
     fill_in_rich_text "site_about_body", with: "Un párrafo nuevo sobre el taller."
-    attach_file "Retrato", file_fixture("obra-01.webp")
+    attach_file "Retrato", file_fixture("obra-01.webp"), make_visible: true
     assert_selector ".uploads li .uploads__status", text: "Lista para subir"
     fill_in "Texto alternativo del retrato", with: "La artista en el taller"
     click_on "Guardar cambios"
