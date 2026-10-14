@@ -1,0 +1,17 @@
+<%# The record's errors above its form, each linked to its field. Turbo focuses it (autofocus) after a failed save. %>
+<% if record.errors.any? %>
+  <div class="error-summary" role="alert" tabindex="-1" autofocus>
+    <h2><%= t("admin.forms.error_summary.title", count: record.errors.count) %></h2>
+    <ul>
+      <% record.errors.each do |error| %>
+        <li>
+          <% if error.attribute == :base %>
+            <%= error.full_message %>
+          <% else %>
+            <%= link_to error.full_message, "##{form.field_id(error.attribute)}" %>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

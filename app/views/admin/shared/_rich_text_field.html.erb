@@ -1,0 +1,13 @@
+<%#
+  A rich-text field (Lexxy) with the Spanish toolbar. The toolbar comes before the editor and the editor
+  points at it (toolbar="<id>"): on a page Turbo renders, custom elements start in document order, and a
+  toolbar inside the editor would start after it, too late for Lexxy.
+  Locals: form, attribute, hint (nil).
+%>
+<% toolbar_id = form.field_id(attribute, :toolbar) %>
+<%= admin_field form, attribute, hint: local_assigns[:hint] do |aria| %>
+  <div class="rich-text">
+    <%= render "admin/shared/rich_text_toolbar", id: toolbar_id, editor_id: form.field_id(attribute) %>
+    <%= form.rich_textarea attribute, aria: aria, toolbar: toolbar_id %>
+  </div>
+<% end %>

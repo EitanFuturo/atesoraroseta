@@ -10,6 +10,9 @@ class Artwork < ApplicationRecord
   image_attachment :image, variants: %i[width og], required: true
   has_rich_text :description
   has_many :details, -> { order(:position) }, class_name: "ArtworkDetail", dependent: :destroy, inverse_of: :artwork
+  # The admin saves the details' alt texts with the work's own form. Existing details only: new ones come
+  # from uploads, one detail per file.
+  accepts_nested_attributes_for :details, reject_if: ->(attributes) { attributes[:id].blank? }
 
   # New works go to the top of the Obra grid.
   acts_as_list add_new_at: :top

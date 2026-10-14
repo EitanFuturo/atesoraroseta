@@ -1,0 +1,65 @@
+<% content_for :title, t(".title") %>
+<%# After ↑ ↓ the page refreshes in place, keeping the scroll position. %>
+<% content_for :head, turbo_refreshes_with(method: :morph, scroll: :preserve) %>
+
+<div class="page-header">
+  <h1><%= t(".title") %></h1>
+  <div class="page-header__actions">
+    <%= link_to t(".new"), new_admin_artwork_path, class: "button" %>
+    <%= admin_external_link t("admin.shared.view_on_site"), root_path %>
+  </div>
+</div>
+
+<p class="page-intro"><%= t(".intro") %></p>
+
+<% if @artworks.any? %>
+  <table class="records records--stack">
+    <thead>
+      <tr>
+        <th scope="col"><span class="visually-hidden"><%= t(".columns.image") %></span></th>
+        <th scope="col"><%= t(".columns.artwork") %></th>
+        <th scope="col"><%= t(".columns.status") %></th>
+        <th scope="col"><%= t(".columns.warnings") %></th>
+        <th scope="col"><%= t(".columns.order") %></th>
+        <th scope="col"><span class="visually-hidden"><%= t(".columns.actions") %></span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @artworks.each_with_index do |artwork, index| %>
+        <tr id="<%= dom_id(artwork) %>">
+          <td class="records__image"><%= admin_thumbnail artwork.image %></td>
+          <td>
+            <%= link_to artwork.title, edit_admin_artwork_path(artwork), class: "records__title" %>
+            <% facts = [ artwork.years_label, (t(".details", count: artwork.details.size) if artwork.details.any?) ].compact %>
+            <% if facts.any? %>
+              <span class="records__facts muted"><%= facts.join(" · ") %></span>
+            <% end %>
+          </td>
+          <td><%= admin_published_badge artwork %></td>
+          <td>
+            <% warnings = admin_artwork_list_warnings(artwork) %>
+            <% if warnings.any? %>
+              <ul class="records__warnings">
+                <% warnings.each do |warning| %>
+                  <li class="warning"><%= warning %></li>
+                <% end %>
+              </ul>
+            <% end %>
+          </td>
+          <td>
+            <%= admin_move_buttons artwork, path: move_admin_artwork_path(artwork), name: "«#{artwork.title}»",
+                  first: index.zero?, last: index == @artworks.size - 1 %>
+          </td>
+          <td>
+            <ul class="actions-list">
+              <li><%= link_to t("admin.shared.edit"), edit_admin_artwork_path(artwork), aria: { label: t(".edit_label", title: artwork.title) } %></li>
+              <li><%= admin_view_on_site_link artwork_path(artwork), published: artwork.published? %></li>
+            </ul>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p class="empty-state"><%= t(".empty") %></p>
+<% end %>

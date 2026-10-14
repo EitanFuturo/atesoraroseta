@@ -1,0 +1,306 @@
+# The back office (/admin) and its login. Model and attribute names come from es.yml (activerecord.*),
+# framework messages from rails-i18n.
+
+es:
+  admin:
+    layout:
+      # "<page> — Panel de atesoraroseta"
+      title: "Panel de %{wordmark}"
+      brand: "Panel"
+      skip_link: "Saltar al contenido"
+      nav:
+        label: "Secciones del panel"
+        view_site: "Ver la web"
+        sign_out: "Cerrar sesión"
+      new_tab: "(se abre en una pestaña nueva)"
+
+    unsupported_browser:
+      title: "Navegador no compatible"
+      heading: "Este navegador es demasiado antiguo para el panel"
+      text: "Para editar la web hace falta una versión reciente de Safari (17.2 o posterior), Chrome, Edge o Firefox. Actualiza el navegador y vuelve a entrar."
+
+    shared:
+      view_on_site: "Ver en la web"
+      preview_on_site: "Ver en la web (vista previa)"
+      unpublished_on_site: "Ver en la web (sin publicar)"
+      edit: "Editar"
+      move:
+        up: "Subir %{name} un puesto"
+        down: "Bajar %{name} un puesto"
+        up_title: "Subir"
+        down_title: "Bajar"
+
+    records:
+      published: "Publicada"
+      draft: "Borrador"
+
+    forms:
+      required: "(obligatorio)"
+      unsaved_changes: "Hay cambios sin guardar en esta página. Si continúas, se perderán. ¿Continuar?"
+      error_summary:
+        title:
+          one: "No se ha podido guardar: hay 1 cosa que corregir"
+          other: "No se ha podido guardar: hay %{count} cosas que corregir"
+
+    images:
+      no_preview: "Sin imagen"
+      dimensions: "%{width} × %{height} px"
+      formats: "%{formats}, hasta %{max_megabytes} MB."
+      formats_each: "%{formats}, hasta %{max_megabytes} MB cada una."
+      choose_hint: "Elige un archivo:"
+      replace_hint: "Para cambiar la imagen, elige otro archivo:"
+      choose_file: "Elegir archivo"
+      choose_files: "Elegir fotos"
+      pending: "Imagen nueva, todavía sin guardar."
+      choose_again: "La imagen nueva no se ha guardado: vuelve a elegirla."
+      remove: "Quitar esta imagen al guardar"
+      unknown_size: "No se ha podido leer el tamaño de esta imagen. Si en la web no se ve bien, vuelve a subirla."
+      low_resolution: "Imagen pequeña: %{long_side} px en el lado largo. Para que se vea nítida en pantallas grandes, sube al menos %{minimum} px."
+      icon_small: "Icono pequeño: %{size} px. Para que se vea nítido, sube una imagen cuadrada de al menos %{minimum} × %{minimum} px."
+      icon_not_square: "El icono no es cuadrado (%{width} × %{height} px): se usará su parte central."
+      social_small: "Imagen pequeña para compartir: %{width} × %{height} px. Se ve mejor de al menos 1200 × 630 px."
+
+    # Messages of the file fields, shown by JavaScript (upload_controller.js) and after saving.
+    uploads:
+      too_large: "«%{name}» pesa %{size} MB y el máximo es %{max} MB: no se subirá."
+      wrong_type: "«%{name}» no es una imagen %{formats}: no se subirá."
+      ready: "Lista para subir"
+      uploading: "Subiendo…"
+      done: "Subida"
+      failed: "No se ha podido subir «%{name}». Comprueba la conexión y vuelve a intentarlo."
+      rejected: "«%{name}»: %{reasons}"
+      rejected_unknown: "Un archivo no se ha podido leer."
+
+    rich_text:
+      bold: "Negrita"
+      italic: "Cursiva"
+      link: "Enlace"
+      link_url: "Dirección del enlace"
+      add_link: "Enlazar"
+      remove_link: "Quitar el enlace"
+      undo: "Deshacer"
+      redo: "Rehacer"
+      more: "Más opciones"
+
+    artworks:
+      index:
+        title: "Obras"
+        intro: "Las obras salen en la web en este orden. Solo se ven las publicadas."
+        new: "Nueva obra"
+        edit_label: "Editar «%{title}»"
+        empty: "Todavía no hay obras."
+        columns:
+          image: "Imagen"
+          artwork: "Obra"
+          status: "Estado"
+          warnings: "Avisos"
+          order: "Orden"
+          actions: "Acciones"
+        details:
+          one: "1 detalle"
+          other: "%{count} detalles"
+        warnings:
+          low_resolution: "Imagen pequeña"
+          alt_missing: "Falta el texto alternativo"
+          details_alt_missing:
+            one: "1 detalle sin texto alternativo"
+            other: "%{count} detalles sin texto alternativo"
+      new:
+        title: "Nueva obra"
+        intro: "Después de crearla podrás añadirle fotos de detalle."
+      edit:
+        destroy:
+          heading: "Eliminar la obra"
+          text:
+            zero: "Se borran la obra y su imagen. No se puede deshacer."
+            one: "Se borran la obra, su imagen y su detalle. No se puede deshacer."
+            other: "Se borran la obra, su imagen y sus %{count} detalles. No se puede deshacer."
+          button: "Eliminar la obra"
+          confirm: "¿Eliminar «%{title}» y todas sus fotos? No se puede deshacer."
+      form:
+        artwork: "La obra"
+        main_image: "Imagen principal"
+        create: "Crear la obra"
+        save: "Guardar cambios"
+        back: "Volver a las obras"
+        alt_missing: "Falta el texto alternativo: ahora se usa el título."
+        hints:
+          slug_new: "La dirección de la obra en la web. Se rellena sola a partir del título; si la cambias, usa solo letras minúsculas sin acentos, números y guiones."
+          slug: "La obra está en %{url}. Si la cambias, los enlaces que ya se hayan compartido dejarán de funcionar. Si la dejas vacía, se crea de nuevo a partir del título."
+          years: "Un año (2024) o un periodo (2023–2024)."
+          medium: "Por ejemplo: carteles arrancados sobre papel."
+          dimensions: "Por ejemplo: 120 × 90 cm."
+          description: "Opcional. Un texto corto que sale junto a la obra."
+          published: "Si está publicada, se ve en la web. Si no, solo tú puedes verla, como vista previa."
+          image_alt: "Describe la obra para quien no puede verla (lectores de pantalla, buscadores). Si lo dejas vacío, se usa el título."
+      details:
+        heading: "Detalles"
+        intro: "Fotos de cerca de la obra. En la web salen en su página, debajo de la imagen principal, en este orden."
+        add: "Añadir detalles"
+        add_hint: "Puedes elegir varias fotos a la vez: se añaden al final, en el orden en que las eliges."
+        upload: "Subir los detalles"
+        number: "Detalle %{number} de %{count}"
+        name: "el detalle %{number}"
+        alt_hint: "Describe lo que se ve en cada detalle, para quien no puede verlo. Si lo dejas vacío, se usa el título de la obra con el número del detalle."
+        alt_missing: "Falta el texto alternativo: ahora se usa «%{current}»."
+        destroy: "Eliminar"
+        destroy_confirm: "¿Eliminar el detalle %{number}? No se puede deshacer."
+        empty: "Esta obra no tiene detalles todavía."
+      create:
+        notice: "Obra «%{title}» creada. Ahora puedes añadirle fotos de detalle."
+      update:
+        notice: "Cambios guardados."
+      destroy:
+        notice: "Obra «%{title}» eliminada."
+      move:
+        up: "«%{title}» ha subido un puesto."
+        down: "«%{title}» ha bajado un puesto."
+
+    artwork_details:
+      create:
+        none: "Elige al menos una foto para añadir."
+        notice:
+          one: "Se ha añadido 1 detalle."
+          other: "Se han añadido %{count} detalles."
+        rejected:
+          one: "No se ha podido añadir 1 archivo:"
+          other: "No se han podido añadir %{count} archivos:"
+      destroy:
+        notice: "Detalle eliminado."
+      move:
+        up: "El detalle ha subido un puesto."
+        down: "El detalle ha bajado un puesto."
+
+    torn_posters:
+      unnamed: "Foto sin lugar ni ciudad"
+      alt_missing: "Falta el texto alternativo: ahora se usa «%{current}»."
+      alt_missing_decorative: "Falta el texto alternativo: sin lugar ni ciudad, la foto se trata como decorativa."
+      index:
+        title: "Torn Posters"
+        intro: "Fotos de los carteles arrancados que inspiran la obra. En la web salen en este orden, y solo las publicadas."
+        upload:
+          heading: "Subir fotos"
+          label: "Fotos"
+          hint: "Puedes elegir muchas a la vez. Se añaden al principio de la lista, sin publicar, en el orden en que las eliges."
+          button: "Subir las fotos"
+        save: "Guardar cambios"
+        publish_all: "Marcar todas como publicadas"
+        columns:
+          photo: "Foto"
+          order: "Orden"
+          actions: "Acciones"
+        label_suffix: "de la foto %{number}"
+        name: "la foto %{number}"
+        low_resolution: "Imagen pequeña"
+        years_hint: "Año: un año (2024) o un periodo (2023–2024)."
+        alt_hint: "Texto alternativo: describe la foto para quien no puede verla. Si lo dejas vacío, se usan el lugar y la ciudad."
+        change_photo: "Cambiar la imagen"
+        destroy: "Eliminar"
+        destroy_confirm: "¿Eliminar la foto %{number}? No se puede deshacer."
+        empty: "Todavía no hay fotos."
+        error_summary: "No se ha guardado nada: corrige las fotos marcadas."
+        error_line: "Foto %{number}: %{message}"
+      edit:
+        title: "Foto: %{label}"
+        intro: "Aquí puedes cambiar la imagen de esta foto. Sus datos también se editan en la tabla de Torn Posters."
+        photo: "La foto"
+        details: "Datos"
+        published_hint: "Si está publicada, se ve en la web. Si no, no se ve en ninguna parte."
+        years_hint: "Un año (2024) o un periodo (2023–2024)."
+        alt_hint: "Describe la foto para quien no puede verla. Si lo dejas vacío, se usan el lugar y la ciudad."
+        back: "Volver a Torn Posters"
+        destroy:
+          heading: "Eliminar la foto"
+          text: "Se borra la foto de la web y del panel. No se puede deshacer."
+          button: "Eliminar la foto"
+          confirm: "¿Eliminar esta foto? No se puede deshacer."
+      create:
+        none: "Elige al menos una foto para subir."
+        notice:
+          one: "Se ha subido 1 foto. Está sin publicar: revisa sus datos y publícala."
+          other: "Se han subido %{count} fotos. Están sin publicar: revisa sus datos y publícalas."
+        rejected:
+          one: "No se ha podido subir 1 archivo:"
+          other: "No se han podido subir %{count} archivos:"
+      bulk_update:
+        notice: "Cambios guardados."
+        published_all: "Cambios guardados. Todas las fotos están publicadas."
+      update:
+        notice: "Foto guardada."
+      destroy:
+        notice: "Foto eliminada."
+      move:
+        up: "La foto ha subido un puesto."
+        down: "La foto ha bajado un puesto."
+
+    # Sobre mí, Contacto and Textos del sitio: the settings record (labels in es.yml).
+    site_settings:
+      save: "Guardar cambios"
+      update:
+        notice: "Cambios guardados."
+      hints:
+        about_lead: "La frase grande del principio de la página."
+        about_body: "Los párrafos que siguen a la frase principal."
+        about_contact_link_label: "El texto del enlace a Contacto, al final de la página."
+        portrait: "En la web se recorta en vertical (4:5) desde el centro."
+        portrait_alt: "Describe el retrato para quien no puede verlo. Si lo dejas vacío, el retrato se trata como decorativo."
+        contact_headline: "El titular grande de la página Contacto."
+        email: "Sale como enlace para escribirte. Si lo dejas vacío, no sale."
+        instagram_handle: "Sin @; también puedes pegar el enlace del perfil. Si lo dejas vacío, no sale."
+        instagram_label: "La palabra que sale encima de tu usuario de Instagram."
+        wordmark: "El nombre del logotipo, arriba a la izquierda. También va en el título de cada página."
+        nav_work_label: "En el menú, y en el enlace de vuelta de cada obra."
+        nav_torn_posters_label: "En el menú."
+        nav_about_label: "En el menú, y como título de la página Sobre mí."
+        nav_contact_label: "En el menú, y como título de la página Contacto."
+        torn_posters_intro: "La línea que sale encima de las fotos de Torn Posters. Si la dejas vacía, no sale."
+        details_label: "El título de la sección de detalles de cada obra."
+        previous_label: "Encima del título de la obra anterior, al final de cada obra."
+        next_label: "Encima del título de la obra siguiente, al final de cada obra."
+        view_details_label: "El enlace a los detalles cuando hay varios. Escribe %{count} donde va el número: «Ver los %{count} detalles» sale como «Ver los 8 detalles»."
+        view_detail_one_label: "El mismo enlace cuando la obra tiene un solo detalle."
+        year_label: "Junto al año de cada obra."
+        medium_label: "Junto a la técnica de cada obra."
+        dimensions_label: "Junto a las medidas de cada obra."
+        seo_description: "Lo que muestran los buscadores, como Google, bajo el enlace a la portada y a Contacto. Mejor si no pasa de unos 155 caracteres."
+        og_image: "La imagen que sale al compartir un enlace de la web en redes sociales o mensajes. Mejor de 1200 × 630 px. Si no pones ninguna, se usa la primera obra."
+        favicon: "El icono de la pestaña del navegador: una imagen cuadrada, mejor en PNG, de al menos 512 × 512 px. Si no pones ninguno, no hay icono."
+        not_found_title: "El título de la página que sale cuando una dirección no existe."
+        not_found_text: "El texto de esa página."
+        not_found_link_label: "El enlace de esa página, que vuelve a la obra."
+
+    about:
+      edit:
+        title: "Sobre mí"
+        intro: "La página Sobre mí: una frase principal, el texto y el retrato."
+        text: "Texto"
+        portrait: "Retrato"
+        portrait_alt_missing: "Falta el texto alternativo del retrato."
+
+    contact:
+      edit:
+        title: "Contacto"
+        intro: "La página Contacto: un titular, tu correo y tu Instagram."
+        contact: "Titular y correo"
+        instagram: "Instagram"
+        instagram_link: "Ahora enlaza a"
+
+    site_texts:
+      edit:
+        title: "Textos del sitio"
+        intro: "Las palabras fijas de la web: el nombre, el menú, las etiquetas de cada obra y otros textos. Los que llevan «(obligatorio)» no pueden quedar vacíos."
+        header: "Cabecera y menú"
+        torn_posters: "Torn Posters"
+        artwork_page: "Página de cada obra"
+        search: "Buscadores y redes sociales"
+        icon: "Icono del sitio"
+        not_found: "Página no encontrada"
+
+  sessions:
+    new:
+      title: "Entrar"
+      heading: "Entrar al panel"
+      intro: "Escribe tu correo y tu contraseña para editar la web."
+      submit: "Entrar"
+    destroy:
+      notice: "Has cerrado la sesión."

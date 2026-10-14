@@ -1,0 +1,144 @@
+<% content_for :title, t(".title") %>
+<%# After ↑ ↓ or Eliminar the page refreshes in place, keeping the scroll position. %>
+<% content_for :head, turbo_refreshes_with(method: :morph, scroll: :preserve) %>
+<% errors = admin_poster_errors(@torn_posters) %>
+
+<%= tag.div data: admin_unsaved_changes_data(dirty: errors.any?) do %>
+  <div class="page-header">
+    <h1><%= t(".title") %></h1>
+    <div class="page-header__actions">
+      <%= admin_external_link t("admin.shared.view_on_site"), torn_posters_path %>
+    </div>
+  </div>
+
+  <p class="page-intro"><%= t(".intro") %></p>
+
+  <section class="section" aria-labelledby="subir-fotos">
+    <h2 id="subir-fotos"><%= t(".upload.heading") %></h2>
+    <%= form_with url: admin_torn_posters_path, class: "upload-form" do |form| %>
+      <%= render "admin/shared/multi_upload_field", id: "poster_images", label: t(".upload.label"), hint: t(".upload.hint") %>
+      <%= form.submit t(".upload.button"), class: "button button--secondary" %>
+    <% end %>
+  </section>
+
+  <% if @torn_posters.any? %>
+    <%#
+      One form for the whole table. Its ↑ ↓ and Eliminar buttons belong to small forms rendered after it
+      (form="…"), since forms can't nest.
+    %>
+    <%= form_with url: bulk_update_admin_torn_posters_path, method: :patch, id: "posters-form", class: "bulk-form",
+          html: { novalidate: true }, data: { unsaved_changes_main: true } do |form| %>
+      <% if errors.any? %>
+        <div class="error-summary" role="alert" tabindex="-1" autofocus>
+          <h2><%= t(".error_summary") %></h2>
+          <ul>
+            <% errors.each do |error| %>
+              <li><%= error %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="bulk-form__actions">
+        <%= form.submit t(".save"), class: "button" %>
+        <%= form.button t(".publish_all"), name: "publish_all", value: "1", class: "button button--secondary" %>
+      </div>
+
+      <table class="records bulk-table">
+        <thead>
+          <tr>
+            <th scope="col"><span class="visually-hidden"><%= t(".columns.photo") %></span></th>
+            <th scope="col"><%= TornPoster.human_attribute_name(:place) %></th>
+            <th scope="col"><%= TornPoster.human_attribute_name(:city) %></th>
+            <th scope="col"><%= TornPoster.human_attribute_name(:years) %></th>
+            <th scope="col"><%= TornPoster.human_attribute_name(:alt) %></th>
+            <th scope="col"><%= TornPoster.human_attribute_name(:published) %></th>
+            <th scope="col"><%= t(".columns.order") %></th>
+            <th scope="col"><span class="visually-hidden"><%= t(".columns.actions") %></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @torn_posters.each_with_index do |poster, index| %>
+            <% number = index + 1 %>
+            <% suffix = tag.span(" #{t(".label_suffix", number: number)}", class: "visually-hidden") %>
+            <tr id="<%= dom_id(poster) %>" class="<%= "is-invalid" if poster.errors.any? %>">
+              <td class="bulk-table__photo">
+                <%= admin_thumbnail poster.image %>
+                <% if (dimensions = admin_image_dimensions(poster.image)) %>
+                  <span class="dimensions"><%= dimensions %></span>
+                <% end %>
+                <% if poster.image_low_resolution? %>
+                  <span class="warning" title="<%= admin_image_warnings(poster.image).first %>"><%= t(".low_resolution") %></span>
+                <% end %>
+              </td>
+
+              <%= fields_for "torn_posters[#{poster.id}]", poster do |fields| %>
+                <td>
+                  <%= fields.label :place, class: "cell-label" do %><%= TornPoster.human_attribute_name(:place) %><%= suffix %><% end %>
+                  <%= fields.text_field :place %>
+                </td>
+                <td>
+                  <%= fields.label :city, class: "cell-label" do %><%= TornPoster.human_attribute_name(:city) %><%= suffix %><% end %>
+                  <%= fields.text_field :city %>
+                </td>
+                <td>
+                  <% years_errors = poster.errors.full_messages_for(:years) %>
+                  <%= fields.label :years, class: "cell-label" do %><%= TornPoster.human_attribute_name(:years) %><%= suffix %><% end %>
+                  <%= fields.text_field :years, class: "input-short", autocomplete: "off",
+                        aria: { describedby: [ "posters_years_hint", (fields.field_id(:years, :error) if years_errors.any?) ].compact.join(" "),
+                                invalid: (true if years_errors.any?) }.compact %>
+                  <% if years_errors.any? %>
+                    <span class="field-error" id="<%= fields.field_id(:years, :error) %>"><%= years_errors.to_sentence %></span>
+                  <% end %>
+                </td>
+                <td>
+                  <%= fields.label :alt, class: "cell-label" do %><%= TornPoster.human_attribute_name(:alt) %><%= suffix %><% end %>
+                  <%= fields.text_field :alt, aria: { describedby: "posters_alt_hint" } %>
+                  <% if (warning = admin_poster_alt_warning(poster)) %>
+                    <span class="warning"><%= warning %></span>
+                  <% end %>
+                </td>
+                <td class="bulk-table__published">
+                  <%= fields.check_box :published %>
+                  <%= fields.label :published, class: "cell-label cell-label--inline" do %><%= TornPoster.human_attribute_name(:published) %><%= suffix %><% end %>
+                </td>
+              <% end %>
+
+              <td>
+                <%= admin_move_buttons poster, path: move_admin_torn_poster_path(poster), name: t(".name", number: number),
+                      first: index.zero?, last: index == @torn_posters.size - 1, form: dom_id(poster, :move) %>
+              </td>
+              <td>
+                <ul class="actions-list">
+                  <li><%= link_to edit_admin_torn_poster_path(poster) do %><%= t(".change_photo") %><%= suffix %><% end %></li>
+                  <li><%= admin_view_on_site_link torn_posters_path(anchor: poster.anchor), published: poster.attribute_in_database(:published), previewable: false %></li>
+                  <li>
+                    <button type="submit" form="<%= dom_id(poster, :destroy) %>" class="button button--danger button--small"
+                            data-turbo-confirm="<%= t(".destroy_confirm", number: number) %>">
+                      <%= t(".destroy") %><span class="visually-hidden"> <%= t(".name", number: number) %></span>
+                    </button>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <p class="hint" id="posters_years_hint"><%= t(".years_hint") %></p>
+      <p class="hint" id="posters_alt_hint"><%= t(".alt_hint") %></p>
+
+      <div class="form-actions">
+        <%= form.submit t(".save"), class: "button" %>
+      </div>
+    <% end %>
+
+    <% @torn_posters.each do |poster| %>
+      <%= admin_move_forms path: move_admin_torn_poster_path(poster), form: dom_id(poster, :move) %>
+      <%= form_with url: admin_torn_poster_path(poster), method: :delete, id: dom_id(poster, :destroy), html: { hidden: true } do %>
+      <% end %>
+    <% end %>
+  <% else %>
+    <p class="empty-state"><%= t(".empty") %></p>
+  <% end %>
+<% end %>

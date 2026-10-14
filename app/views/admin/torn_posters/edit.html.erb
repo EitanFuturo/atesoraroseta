@@ -1,0 +1,70 @@
+<% label = admin_poster_label(@poster) %>
+<% content_for :title, t(".title", label: label) %>
+
+<%= tag.div data: admin_unsaved_changes_data(dirty: @poster.errors.any?) do %>
+  <div class="page-header">
+    <div>
+      <p class="breadcrumb"><%= link_to t("admin.torn_posters.index.title"), admin_torn_posters_path %></p>
+      <h1><%= t(".title", label: label) %></h1>
+    </div>
+    <div class="page-header__actions">
+      <%= admin_view_on_site_link torn_posters_path(anchor: @poster.anchor), published: @poster.attribute_in_database(:published), previewable: false %>
+    </div>
+  </div>
+
+  <p class="page-intro"><%= t(".intro") %></p>
+
+  <%= form_with model: [ :admin, @poster ], id: "poster-form", class: "form", html: { novalidate: true },
+        data: { unsaved_changes_main: true } do |form| %>
+    <%= render "admin/shared/error_summary", record: @poster, form: form %>
+
+    <fieldset class="fieldset">
+      <legend><%= t(".photo") %></legend>
+
+      <%= render "admin/shared/image_field", form: form, attribute: :image, required: true %>
+
+      <%= admin_field form, :alt, hint: t(".alt_hint") do |aria| %>
+        <%= form.text_field :alt, aria: aria %>
+        <% if (warning = admin_poster_alt_warning(@poster)) %>
+          <p class="warning"><%= warning %></p>
+        <% end %>
+      <% end %>
+    </fieldset>
+
+    <fieldset class="fieldset">
+      <legend><%= t(".details") %></legend>
+
+      <%= admin_field form, :place do |aria| %>
+        <%= form.text_field :place, aria: aria %>
+      <% end %>
+
+      <%= admin_field form, :city do |aria| %>
+        <%= form.text_field :city, aria: aria %>
+      <% end %>
+
+      <%= admin_field form, :years, hint: t(".years_hint") do |aria| %>
+        <%= form.text_field :years, aria: aria, autocomplete: "off", class: "input-short" %>
+      <% end %>
+
+      <div class="field switch-field">
+        <%= form.check_box :published, role: "switch", aria: { describedby: form.field_id(:published, :hint) } %>
+        <div>
+          <%= form.label :published %>
+          <p class="hint" id="<%= form.field_id(:published, :hint) %>"><%= t(".published_hint") %></p>
+        </div>
+      </div>
+    </fieldset>
+
+    <div class="form-actions">
+      <%= form.submit t("admin.torn_posters.index.save"), class: "button" %>
+      <%= link_to t(".back"), admin_torn_posters_path %>
+    </div>
+  <% end %>
+
+  <section class="section section--danger" aria-labelledby="eliminar-foto">
+    <h2 id="eliminar-foto"><%= t(".destroy.heading") %></h2>
+    <p><%= t(".destroy.text") %></p>
+    <%= button_to t(".destroy.button"), admin_torn_poster_path(@poster), method: :delete, class: "button button--danger",
+          form: { data: { turbo_confirm: t(".destroy.confirm") } } %>
+  </section>
+<% end %>

@@ -1,0 +1,25 @@
+<% title = @artwork.attribute_in_database(:title) %>
+<% content_for :title, title %>
+
+<%= tag.div data: admin_unsaved_changes_data(dirty: @artwork.errors.any?) do %>
+  <div class="page-header">
+    <div>
+      <p class="breadcrumb"><%= link_to t("admin.artworks.index.title"), admin_artworks_path %></p>
+      <h1><%= title %></h1>
+    </div>
+    <div class="page-header__actions">
+      <%= admin_view_on_site_link artwork_path(@artwork), published: @artwork.attribute_in_database(:published) %>
+    </div>
+  </div>
+
+  <%= render "form", artwork: @artwork %>
+
+  <%= render "details", artwork: @artwork %>
+
+  <section class="section section--danger" aria-labelledby="eliminar-obra">
+    <h2 id="eliminar-obra"><%= t(".destroy.heading") %></h2>
+    <p><%= t(".destroy.text", count: @artwork.details.size) %></p>
+    <%= button_to t(".destroy.button"), admin_artwork_path(@artwork), method: :delete, class: "button button--danger",
+          form: { data: { turbo_confirm: t(".destroy.confirm", title: title) } } %>
+  </section>
+<% end %>

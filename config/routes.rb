@@ -22,5 +22,28 @@ Rails.application.routes.draw do
   # The back office: every route here requires login.
   namespace :admin do
     root "artworks#index"
+
+    # Works are found by slug (Artwork#to_param); show redirects to edit. PATCH …/move?direction=up|down
+    # moves a work or a detail one place.
+    resources :artworks do
+      patch :move, on: :member
+
+      # Detail photos, on the work's edit page: several uploaded at once.
+      resources :details, controller: "artwork_details", only: %i[create destroy] do
+        patch :move, on: :member
+      end
+    end
+
+    # Torn Posters: uploaded many at once (create), edited together in one table (bulk_update), and one by
+    # one on their own page to replace the photo (edit, update). Show redirects to edit.
+    resources :torn_posters, path: "torn-posters", except: :new do
+      patch :move, on: :member
+      patch :bulk_update, on: :collection
+    end
+
+    # The settings record (Site), edited on three pages, each with its own fields. Show redirects to edit.
+    resource :about, controller: "about", only: %i[show edit update]
+    resource :contact, controller: "contact", only: %i[show edit update]
+    resource :site_texts, path: "site-texts", only: %i[show edit update]
   end
 end

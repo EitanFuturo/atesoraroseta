@@ -1,0 +1,14 @@
+<% content_for :title, t(".title") %>
+
+<%= tag.div data: admin_unsaved_changes_data(dirty: @artwork.errors.any?) do %>
+  <div class="page-header">
+    <div>
+      <p class="breadcrumb"><%= link_to t("admin.artworks.index.title"), admin_artworks_path %></p>
+      <h1><%= t(".title") %></h1>
+    </div>
+  </div>
+
+  <p class="page-intro"><%= t(".intro") %></p>
+
+  <%= render "form", artwork: @artwork %>
+<% end %>

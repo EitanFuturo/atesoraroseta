@@ -1,0 +1,58 @@
+<% content_for :title, t(".title") %>
+
+<%= tag.div data: admin_unsaved_changes_data(dirty: @site.errors.any?) do %>
+  <div class="page-header">
+    <h1><%= t(".title") %></h1>
+    <div class="page-header__actions">
+      <%= admin_external_link t("admin.shared.view_on_site"), root_path %>
+    </div>
+  </div>
+
+  <p class="page-intro"><%= t(".intro") %></p>
+
+  <%= form_with model: @site, url: admin_site_texts_path, method: :patch, id: "site-form", class: "form", html: { novalidate: true },
+        data: { unsaved_changes_main: true } do |form| %>
+    <%= render "admin/shared/error_summary", record: @site, form: form %>
+
+    <fieldset class="fieldset">
+      <legend><%= t(".header") %></legend>
+      <% %i[wordmark nav_work_label nav_torn_posters_label nav_about_label nav_contact_label].each do |attribute| %>
+        <%= admin_site_field form, attribute %>
+      <% end %>
+    </fieldset>
+
+    <fieldset class="fieldset">
+      <legend><%= t(".torn_posters") %></legend>
+      <%= admin_site_field form, :torn_posters_intro, as: :text_area %>
+    </fieldset>
+
+    <fieldset class="fieldset">
+      <legend><%= t(".artwork_page") %></legend>
+      <% %i[details_label previous_label next_label view_details_label view_detail_one_label year_label medium_label dimensions_label].each do |attribute| %>
+        <%= admin_site_field form, attribute %>
+      <% end %>
+    </fieldset>
+
+    <fieldset class="fieldset">
+      <legend><%= t(".search") %></legend>
+      <%= admin_site_field form, :seo_description, as: :text_area %>
+      <%= render "admin/shared/image_field", form: form, attribute: :og_image, removable: true, kind: :social, hint: t("admin.site_settings.hints.og_image") %>
+    </fieldset>
+
+    <fieldset class="fieldset">
+      <legend><%= t(".icon") %></legend>
+      <%= render "admin/shared/image_field", form: form, attribute: :favicon, removable: true, kind: :icon, hint: t("admin.site_settings.hints.favicon") %>
+    </fieldset>
+
+    <fieldset class="fieldset">
+      <legend><%= t(".not_found") %></legend>
+      <%= admin_site_field form, :not_found_title %>
+      <%= admin_site_field form, :not_found_text, as: :text_area %>
+      <%= admin_site_field form, :not_found_link_label %>
+    </fieldset>
+
+    <div class="form-actions">
+      <%= form.submit t("admin.site_settings.save"), class: "button" %>
+    </div>
+  <% end %>
+<% end %>

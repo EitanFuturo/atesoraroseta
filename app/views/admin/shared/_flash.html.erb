@@ -1,0 +1,20 @@
+<% if notice.present? || alert.present? %>
+  <div class="flash-messages">
+    <% if notice.present? %>
+      <p class="flash flash--notice" role="status"><%= notice %></p>
+    <% end %>
+    <% if alert.present? %>
+      <div class="flash flash--alert" role="alert">
+        <p><%= alert %></p>
+        <%# One line per file that couldn't be added, after an upload of several. %>
+        <% if flash[:alert_details].present? %>
+          <ul>
+            <% Array(flash[:alert_details]).each do |line| %>
+              <li><%= line %></li>
+            <% end %>
+          </ul>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
