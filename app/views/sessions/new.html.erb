@@ -4,7 +4,8 @@
   <h1 id="login-heading"><%= t(".heading") %></h1>
   <p class="hint"><%= t(".intro") %></p>
 
-  <%= form_with url: session_path, class: "form" do |form| %>
+  <%# novalidate: the server answers in Spanish, whatever the browser's language. %>
+  <%= form_with url: session_path, class: "form", html: { novalidate: true } do |form| %>
     <div class="field">
       <%= form.label :email_address, User.human_attribute_name(:email_address) %>
       <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", value: params[:email_address] %>

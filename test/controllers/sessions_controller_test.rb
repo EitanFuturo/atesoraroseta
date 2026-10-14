@@ -16,6 +16,7 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_select "label[for=email_address]", "Correo electrónico"
     assert_select "label[for=password]", "Contraseña"
     assert_select "input[type=submit][value=Entrar]"
+    assert_select "form[novalidate][action=?]", session_path
     assert_select "a", text: /contraseña|olvid|regist|cuenta/i, count: 0
     assert_select "nav", count: 0
   end
