@@ -5,12 +5,9 @@ require "kamal"
 # change that breaks the configuration or a rule of the shared droplet fails here. Nothing connects to a
 # server and no secret is read: the commands are only built.
 class KamalConfigTest < ActiveSupport::TestCase
-  DUMMY_VALUES = { "<SPACES_BUCKET>" => "example-bucket", "<SPACES_REGION>" => "ams3" }.freeze
-
   setup do
     @dir = Dir.mktmpdir("kamal-config")
-    yaml = DUMMY_VALUES.reduce(Rails.root.join("config/deploy.yml").read) { |text, (placeholder, value)| text.gsub(placeholder, value) }
-    File.write(File.join(@dir, "deploy.yml"), yaml)
+    File.write(File.join(@dir, "deploy.yml"), Rails.root.join("config/deploy.yml").read)
     @config = Kamal::Configuration.create_from(config_file: Pathname(File.join(@dir, "deploy.yml")), version: "test")
     @host = @config.primary_host
     @role = @config.role(:web)
@@ -37,47 +34,32 @@ class KamalConfigTest < ActiveSupport::TestCase
     assert_nil @config.proxy_run(@host), "proxy/run would reconfigure the proxy every project on the server shares"
   end
 
-  test "neither the app nor the accessory publishes a host port" do
-    commands = [ app_command.run(hostname: "test"), accessory_command.run(host: @host) ].map { |command| command.join(" ") }
-
-    commands.each do |command|
-      assert_no_match(/--publish|\s-p\s/, command)
-    end
+  test "the app publishes no host port" do
+    assert_no_match(/--publish|\s-p\s/, app_command.run(hostname: "test").join(" "))
   end
 
   test "the app's memory is capped, so it can't starve the other projects on the 1 GB droplet" do
     assert_includes app_command.run(hostname: "test").join(" "), '--memory "600m"'
   end
 
-  test "the app gets its address, the jobs in Puma and the Spaces settings; its only secret is the master key" do
+  test "the app gets its address and the jobs in Puma; its only secret is the master key" do
     clear = @role.env(@host).clear
 
     assert_equal "atesoraroseta.com", clear["APP_HOST"]
     assert_equal "true", clear["SOLID_QUEUE_IN_PUMA"].to_s
     assert_equal "60", clear["HTTP_WRITE_TIMEOUT"].to_s
-    assert_equal %w[SPACES_BUCKET SPACES_ENDPOINT SPACES_REGION], clear.keys.grep(/\ASPACES_/).sort
     assert_equal [ "RAILS_MASTER_KEY" ], @role.env(@host).secret_keys
   end
 
-  test "the Litestream accessory replicates the app's volume as the app's user" do
-    accessory = @config.accessory("litestream")
-    command = accessory_command.run(host: @host).join(" ")
-
-    assert_equal "atesoraroseta-litestream", accessory.service_name
-    assert_match(/\Alitestream\/litestream:0\.5\.\d+\z/, accessory.image)
-    assert_equal "replicate", accessory.cmd
-    assert_equal [ "/etc/litestream.yml" ], accessory.files.values.map { |file| file[:container_path] }
-    assert_equal Rails.root.join("config/litestream.yml").to_s, accessory.files.keys.first
-    assert_includes command, "--volume atesoraroseta_storage:/rails/storage"
-    assert_includes command, '--user "1000:1000"'
-    assert_equal %w[SPACES_ACCESS_KEY_ID SPACES_SECRET_ACCESS_KEY], accessory.env.secret_keys.sort
-    assert_equal %w[SPACES_BUCKET SPACES_ENDPOINT SPACES_REGION], accessory.env.clear.keys.sort
+  test "off-server backups are off: no Litestream accessory and no Spaces settings" do
+    assert_empty @config.accessories
+    assert_empty @role.env(@host).clear.keys.grep(/\ASPACES_/)
   end
 
   test ".kamal/secrets only reads the master key and the encrypted credentials" do
     assignments = Rails.root.join(".kamal/secrets").readlines(chomp: true).grep_v(/\A\s*(#|\z)/)
 
-    assert_equal %w[RAILS_MASTER_KEY SPACES_ACCESS_KEY_ID SPACES_SECRET_ACCESS_KEY],
+    assert_equal %w[RAILS_MASTER_KEY],
       assignments.map { |line| line.split("=", 2).first }
     assignments.each do |line|
       assert_match(/\A[A-Z_]+=\$\((cat config\/master\.key|bin\/rails credentials:fetch [a-z_.]+)\)\z/, line)
@@ -88,9 +70,5 @@ class KamalConfigTest < ActiveSupport::TestCase
   private
     def app_command
       Kamal::Commands::App.new(@config, role: @role, host: @host)
-    end
-
-    def accessory_command
-      Kamal::Commands::Accessory.new(@config, name: "litestream")
     end
 end

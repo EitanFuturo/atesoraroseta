@@ -37,11 +37,13 @@ class BackupUploadsJobTest < ActiveJob::TestCase
     end
   end
 
-  test "it runs every night at 03:30 in Madrid, in summer and in winter" do
-    task = YAML.load_file(Rails.root.join("config/recurring.yml")).dig("production", "backup_uploads")
-    schedule = Fugit.parse(task["schedule"], multi: :fail)
+  test "it isn't scheduled while off-server backups are off" do
+    assert_nil YAML.load_file(Rails.root.join("config/recurring.yml")).dig("production", "backup_uploads")
+  end
 
-    assert_equal BackupUploadsJob, task["class"].constantize
+  test "the schedule to add back runs every night at 03:30 in Madrid, in summer and in winter" do
+    schedule = Fugit.parse("every day at 3:30am Europe/Madrid", multi: :fail)
+
     assert_instance_of Fugit::Cron, schedule, "Solid Queue only accepts schedules that parse to a cron"
     assert_equal Time.utc(2026, 7, 2, 1, 30), schedule.next_time(EtOrbi.make_time("2026-07-01 12:00:00 UTC")).utc
     assert_equal Time.utc(2026, 12, 2, 2, 30), schedule.next_time(EtOrbi.make_time("2026-12-01 12:00:00 UTC")).utc

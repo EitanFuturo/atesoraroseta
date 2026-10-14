@@ -51,12 +51,9 @@ proxy:
 registry:
   server: localhost:5555
 
-# The backups bucket: this project's own private Spaces bucket. The app (BackupUploadsJob) and the
-# Litestream accessory both read these; the access keys are secrets (see .kamal/secrets).
-x-spaces: &spaces
-  SPACES_BUCKET: <SPACES_BUCKET>
-  SPACES_REGION: <SPACES_REGION>
-  SPACES_ENDPOINT: https://<SPACES_REGION>.digitaloceanspaces.com
+# Off-server backups are off (the user's decision on 2026-10-14: no new costs for now). The data lives
+# only in the atesoraroseta_storage volume on the droplet. DEPLOY.md, "Turning backups on", lists what to
+# add back: the Spaces settings here, the Litestream accessory, the keys and the nightly job.
 
 # Inject ENV variables into containers (secrets come from .kamal/secrets).
 env:
@@ -70,10 +67,8 @@ env:
 
     # Thruster's limit for a whole response, matching proxy/response_timeout.
     HTTP_WRITE_TIMEOUT: 60
-
-    <<: *spaces
   secret:
-    # Decrypts config/credentials.yml.enc: the app reads the admin login and the Spaces keys from it.
+    # Decrypts config/credentials.yml.enc: the app reads the admin login from it.
     - RAILS_MASTER_KEY
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
@@ -84,8 +79,7 @@ aliases:
   logs: app logs -f
   dbc: app exec --interactive --reuse "bin/rails dbconsole --include-password"
 
-# The SQLite databases and the Active Storage files live in this Docker volume. Litestream and the nightly
-# uploads backup copy them to Spaces.
+# The SQLite databases and the Active Storage files live in this Docker volume.
 volumes:
   - "atesoraroseta_storage:/rails/storage"
 
@@ -104,26 +98,3 @@ retain_containers: 3
 # shares), add a remote: line with the droplet's SSH address, as DEPLOY.md explains (Troubleshooting).
 builder:
   arch: amd64
-
-# Use accessory services (secrets come from .kamal/secrets).
-accessories:
-  # Continuous replication of storage/production.sqlite3 to Spaces (config/litestream.yml). One process
-  # per server: the app's zero-downtime deploys briefly run two app containers, but never two of these.
-  litestream:
-    image: litestream/litestream:0.5.17
-    roles:
-      - web
-    cmd: replicate
-    files:
-      - config/litestream.yml:/etc/litestream.yml:ro
-    volumes:
-      - "atesoraroseta_storage:/rails/storage"
-    options:
-      # The app's user in the image, so the files Litestream writes next to the database stay the app's.
-      user: "1000:1000"
-    env:
-      clear:
-        <<: *spaces
-      secret:
-        - SPACES_ACCESS_KEY_ID
-        - SPACES_SECRET_ACCESS_KEY

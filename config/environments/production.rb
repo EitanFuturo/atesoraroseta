@@ -24,7 +24,7 @@ Rails.application.configure do
   # config.asset_host = "http://assets.example.com"
 
   # Store uploaded files on the local file system (see config/storage.yml for options). In production
-  # storage/ is the Docker volume atesoraroseta_storage; BackupUploadsJob copies the files to Spaces nightly.
+  # storage/ is the Docker volume atesoraroseta_storage (no off-server copy for now: DEPLOY.md, "Turning backups on").
   config.active_storage.service = :local
 
   # kamal-proxy terminates SSL (Let's Encrypt) and talks plain HTTP to the app.

@@ -2,6 +2,8 @@
 
 This guide takes the site from this folder on your Mac to **https://atesoraroseta.com** on a DigitalOcean droplet, with off-server backups. It assumes no Kamal experience. Every command runs **on your Mac, from this project's folder**, unless it says otherwise.
 
+> **Off-server backups are off** (the user's decision on 2026-10-14: no new costs for now). The databases and the uploaded images live only in the `atesoraroseta_storage` volume on the droplet. If the droplet or that volume is lost, so is the content. The Spaces and Litestream parts of this guide (B2's `spaces` block, B3, the backup checks in B4, B7) apply only after [Turning backups on](#turning-backups-on).
+
 - [What runs where](#what-runs-where)
 - [Values you must provide](#values-you-must-provide)
 - [Part A: the shared server (once, for all your projects)](#part-a-the-shared-server-once-for-all-your-projects)
@@ -39,7 +41,7 @@ visitor ── https ──▶ droplet :443 ── kamal-proxy (one per server, 
 | `<SPACES_REGION>` | the bucket's region, such as `ams3` or `fra1` | `config/deploy.yml` (twice) |
 | `<SPACES_ACCESS_KEY_ID>`, `<SPACES_SECRET_ACCESS_KEY>` | an access key for the backups bucket only | encrypted credentials |
 
-The droplet is already filled in: **165.22.43.43**, the droplet this app shares with perishables. There is no registry to set up (A5).
+The droplet is already filled in: **165.22.43.43**, the droplet this app shares with perishables. There is no registry to set up (A5), and with backups off the Spaces values below aren't needed.
 
 In this guide, `<LIKE_THIS>` always means "replace with your value". After editing `config/deploy.yml`, this must print nothing:
 
@@ -174,7 +176,7 @@ Open the credentials (they open decrypted in your editor and are encrypted again
 EDITOR="nano" bin/rails credentials:edit
 ```
 
-Add the `spaces` block. Keep the `secret_key_base` and `admin` entries that are already there (the admin block is written by `bin/rails admin:credentials`, see B6):
+With backups on, add the `spaces` block (without them, there is nothing to add). Keep the `secret_key_base` and `admin` entries that are already there (the admin block is written by `bin/rails admin:credentials`, see B6):
 
 ```yaml
 secret_key_base: …already there, don't change it…
@@ -207,7 +209,7 @@ Where each secret ends up:
 
 `.kamal/secrets` contains no secret: it only reads them from `config/master.key` and the credentials (`bin/rails credentials:fetch …`) when Kamal needs them. On the server, Kamal keeps them in env files under `~/.kamal/apps/atesoraroseta/env/` that only root can read.
 
-### B3. The backups bucket
+### B3. The backups bucket (only with backups on)
 
 In the control panel: **Spaces Object Storage → Create Bucket**.
 
@@ -223,9 +225,57 @@ Then **Spaces Object Storage → Access Keys → Create Access Key**:
 
 Spaces costs $5/month for the account, including 250 GiB of storage. Your other projects get their own buckets and keys.
 
+#### Turning backups on
+
+Everything that does the backups is still in the app (`BackupUploadsJob`, `bin/rails backup:*`, `config/litestream.yml`); only the deploy settings were removed. To turn them on:
+
+1. Create the bucket and its key (above), and add the `spaces` block to the credentials (B2).
+2. In `config/deploy.yml`, add the bucket's settings to `env: clear:`, and add the Litestream accessory at the end:
+
+   ```yaml
+   env:
+     clear:
+       # …the existing variables…
+       SPACES_BUCKET: atesoraroseta-backups
+       SPACES_REGION: nyc3
+       SPACES_ENDPOINT: https://nyc3.digitaloceanspaces.com
+
+   accessories:
+     litestream:
+       image: litestream/litestream:0.5.17
+       roles:
+         - web
+       cmd: replicate
+       files:
+         - config/litestream.yml:/etc/litestream.yml:ro
+       volumes:
+         - "atesoraroseta_storage:/rails/storage"
+       options:
+         user: "1000:1000"
+       env:
+         clear:
+           SPACES_BUCKET: atesoraroseta-backups
+           SPACES_REGION: nyc3
+           SPACES_ENDPOINT: https://nyc3.digitaloceanspaces.com
+         secret:
+           - SPACES_ACCESS_KEY_ID
+           - SPACES_SECRET_ACCESS_KEY
+   ```
+3. In `.kamal/secrets`, add:
+
+   ```sh
+   SPACES_ACCESS_KEY_ID=$(bin/rails credentials:fetch spaces.access_key_id)
+   SPACES_SECRET_ACCESS_KEY=$(bin/rails credentials:fetch spaces.secret_access_key)
+   ```
+4. In `config/recurring.yml`, uncomment `backup_uploads` (the nightly copy at 03:30 Madrid time).
+5. Update the tests that check backups are off (`test/deploy/kamal_config_test.rb`, `test/jobs/backup_uploads_job_test.rb`), commit, then `bin/kamal deploy` and `bin/kamal accessory boot litestream`.
+6. Copy everything uploaded so far right away: `bin/kamal app exec --reuse "bin/rails backup:uploads"`, then check with `backup:status` (B7).
+
+A cheaper safety net without Spaces: DigitalOcean's droplet backups (the droplet's **Backups** tab, 20–30% of the droplet's price) snapshot the whole server weekly or daily, with no change to the app.
+
 ### B4. First deploy
 
-First fill in `config/deploy.yml`: replace the five placeholders listed in [Values you must provide](#values-you-must-provide), check with `grep -n "<[A-Z_]*>" config/deploy.yml` (no output), and **commit**. Kamal always deploys the last commit; uncommitted changes are not deployed. `bin/kamal config` shows the result (it prints no secret values here, but don't paste its output publicly).
+First check `config/deploy.yml`: `grep -n "<[A-Z_]*>" config/deploy.yml` must print nothing (with backups off there are no placeholders left), and **commit**. Kamal always deploys the last commit; uncommitted changes are not deployed. `bin/kamal config` shows the result (it prints no secret values here, but don't paste its output publicly).
 
 Then:
 
@@ -238,10 +288,10 @@ It takes a few minutes. Kamal:
 1. installs Docker on the droplet if it is missing;
 2. builds the image on your Mac (for amd64), pushes it to the local registry and has the droplet pull it over SSH (A5);
 3. starts kamal-proxy if no other project has;
-4. starts the Litestream container (`atesoraroseta-litestream`);
+4. with backups on, starts the Litestream container (`atesoraroseta-litestream`);
 5. starts the app, which prepares the databases on the first boot (the site's default texts and the admin user), and switches kamal-proxy to it as soon as `/up` answers.
 
-During the first 30 seconds Litestream logs `timeout waiting for db initialization` warnings, because the database doesn't exist yet. That is expected; after that it replicates.
+With backups on, during the first 30 seconds Litestream logs `timeout waiting for db initialization` warnings, because the database doesn't exist yet. That is expected; after that it replicates.
 
 **Checks:**
 
@@ -250,6 +300,7 @@ curl -sI https://atesoraroseta.com | head -1                      # HTTP/2 200
 curl -sI http://atesoraroseta.com | grep -i location               # https://atesoraroseta.com/
 curl -sI https://www.atesoraroseta.com/sobre-mi | grep -i location # https://atesoraroseta.com/sobre-mi
 curl -svo /dev/null https://atesoraroseta.com 2>&1 | grep -E "issuer|expire date"   # Let's Encrypt
+# only with backups on:
 bin/kamal accessory logs litestream --lines 20                     # "replicating to … bucket=…", "compaction complete"
 bin/kamal app exec --reuse "bin/rails backup:status"
 ```
@@ -306,7 +357,7 @@ Notes:
 - Forgot the password? It is in the credentials: `bin/rails credentials:show` on your Mac.
 - The login allows 5 attempts per 10 minutes from one IP address.
 
-### B7. Backups
+### B7. Backups (only with backups on)
 
 **What is backed up, and when:**
 
