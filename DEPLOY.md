@@ -22,7 +22,7 @@ visitor ── https ──▶ droplet :443 ── kamal-proxy (one per server, 
                                                                                             uploads/ (nightly job)
 ```
 
-- **[Kamal](https://kamal-deploy.org)** (version 2.12, bundled with the app: always run `bin/kamal`, never a global `kamal`) builds a Docker image of the app on your Mac, pushes it to **DigitalOcean Container Registry**, and starts it on the droplet over SSH.
+- **[Kamal](https://kamal-deploy.org)** (version 2.12, bundled with the app: always run `bin/kamal`, never a global `kamal`) builds a Docker image of the app on your Mac, hands it to the droplet over SSH through a temporary registry on your Mac (no registry account, see A5), and starts it there.
 - **kamal-proxy** listens on ports 80 and 443, gets a free **Let's Encrypt** certificate for each host name, and sends every request to the app that owns its host name. `www.atesoraroseta.com` is answered by the app with a permanent redirect to `atesoraroseta.com`.
 - **Data** lives in one Docker volume, `atesoraroseta_storage`: the databases (`production*.sqlite3`) and the uploaded files.
 - **Backups** go to this project's own private **Spaces** bucket:
@@ -35,13 +35,11 @@ visitor ── https ──▶ droplet :443 ── kamal-proxy (one per server, 
 
 | Placeholder | What it is | Where it goes |
 |---|---|---|
-| `<DROPLET_IP>` | the droplet's public IPv4 address | `config/deploy.yml` (`servers`), DNS |
-| `<REGISTRY_NAME>` | the name of your DigitalOcean Container Registry | `config/deploy.yml` (`image`) |
-| `<DIGITALOCEAN_EMAIL>` | the email of your DigitalOcean account (the registry's username) | `config/deploy.yml` (`registry`) |
 | `<SPACES_BUCKET>` | the backups bucket's name (suggested: `atesoraroseta-backups`) | `config/deploy.yml` |
 | `<SPACES_REGION>` | the bucket's region, such as `ams3` or `fra1` | `config/deploy.yml` (twice) |
-| `<DIGITALOCEAN_API_TOKEN>` | a token that can push to and pull from the registry | encrypted credentials |
 | `<SPACES_ACCESS_KEY_ID>`, `<SPACES_SECRET_ACCESS_KEY>` | an access key for the backups bucket only | encrypted credentials |
+
+The droplet is already filled in: **165.22.43.43**, the droplet this app shares with perishables. There is no registry to set up (A5).
 
 In this guide, `<LIKE_THIS>` always means "replace with your value". After editing `config/deploy.yml`, this must print nothing:
 
@@ -53,6 +51,8 @@ grep -n "<[A-Z_]*>" config/deploy.yml
 
 ## Part A: the shared server (once, for all your projects)
 
+This app runs on the existing droplet **165.22.43.43**, which also runs perishables (deployed with Kamal 2.2.2; see A4 about keeping Kamal versions aligned). A1 is only needed for a new server.
+
 ### A1. Create the droplet
 
 In the [DigitalOcean control panel](https://cloud.digitalocean.com): **Create → Droplets**.
@@ -62,7 +62,7 @@ In the [DigitalOcean control panel](https://cloud.digitalocean.com): **Create �
 3. **Size:** Basic, Regular. **2 GB RAM** is enough for this site plus one more small app; choose **4 GB** for several apps. (This app uses about 0.5–0.7 GB, more for a moment while it resizes a large upload.)
 4. **Authentication:** **SSH key**. If you don't have one yet, create it on your Mac with `ssh-keygen -t ed25519`, then paste the contents of `~/.ssh/id_ed25519.pub` into DigitalOcean.
 5. **Backups (optional):** DigitalOcean's weekly or daily droplet backups add an extra safety net for the whole server, at 20–30% of the droplet's price. The app's own backups (Part B) don't depend on them.
-6. Create it, and note its **IPv4 address**: that is `<DROPLET_IP>`.
+6. Create it, and note its **IPv4 address**: it replaces 165.22.43.43 in `config/deploy.yml` and in DNS.
 
 Then **Networking → Firewalls → Create Firewall**, applied to the droplet:
 
@@ -75,7 +75,7 @@ Then **Networking → Firewalls → Create Firewall**, applied to the droplet:
 Leave outbound rules at "all". Then check that you can log in (type `yes` the first time):
 
 ```sh
-ssh root@<DROPLET_IP> "uname -a"
+ssh root@165.22.43.43 "uname -a"
 ```
 
 Kamal installs Docker on the server by itself the first time (`bin/kamal setup`).
@@ -94,7 +94,7 @@ Kamal installs Docker on the server by itself the first time (`bin/kamal setup`)
 - **If the droplet already serves a site on ports 80/443**, kamal-proxy can't start. Move that site behind kamal-proxy first (as its own Kamal app), then deploy this one. To check what is listening:
 
   ```sh
-  ssh root@<DROPLET_IP> "ss -tlnp | grep -E ':(80|443) ' || echo 'ports 80 and 443 are free'"
+  ssh root@165.22.43.43 "ss -tlnp | grep -E ':(80|443) ' || echo 'ports 80 and 443 are free'"
   ```
 
 ### A4. Commands that affect every project on the server
@@ -112,24 +112,21 @@ Most `bin/kamal` commands touch only this app's containers. These don't; run the
 
 **Keep all projects on the same Kamal version.** Kamal 2.12 needs kamal-proxy **v0.9.2** or newer. If another project, deployed with an older Kamal, started an older proxy, `bin/kamal setup` stops with "kamal-proxy version … is too old"; then run `bin/kamal proxy reboot` once from this project (every site blinks for a few seconds).
 
-### A5. The container registry
+### A5. No container registry
 
-The droplet downloads the app's image from **DigitalOcean Container Registry**. In the control panel, **Container Registry → Create**:
+Kamal 2.12 deploys without a registry account (`registry: server: localhost:5555` in `config/deploy.yml`). During `bin/kamal setup` and `bin/kamal deploy` it:
 
-- **Name:** something unique, such as your username: that is `<REGISTRY_NAME>`.
-- **Region:** the droplet's.
-- **Plan:**
+1. starts a registry container on your Mac, `kamal-docker-registry`, listening only on `127.0.0.1:5555`;
+2. builds the image and pushes it there;
+3. forwards that port over the deploy's SSH connection, so the droplet pulls the image from its own `localhost:5555`.
 
-  | Plan | Price | Repositories | Storage |
-  |---|---|---|---|
-  | Starter | free | 1 | 500 MiB |
-  | Basic | $5/month | 5 | 5 GiB |
-  | Professional | $20/month | unlimited | 100 GiB |
+There is nothing to sign up for, no token to renew and no registry storage to clean up.
 
-  Each project is one repository. This app's first push stores about **210 MB**; each later deploy adds only the layers that changed, a few tens of MB. So the free plan holds this project only, and fills up after roughly ten deploys. **With several projects, choose Basic** (or use GitHub's registry, ghcr.io, for the others).
-- **Old images:** every deploy pushes a new version and Kamal never deletes them from the registry, and untagged images still count. Every few months (or when a push fails for lack of space), in **Container Registry**, delete old tags and click **Start Garbage Collection**.
+- Deploys need this Mac, or another computer with the project and `config/master.key`, which was already the case.
+- The droplet keeps the running image and the three before it for rollbacks (`retain_containers: 3`).
+- On a brand-new droplet, `bin/kamal setup` sends the image again; nothing has to be downloaded from a registry.
 
-Then create the token Kamal logs in with: **API → Generate New Token**. Give it **read and write access to the Container Registry** (with custom scopes: the registry scopes, read included; "Full Access" also works but grants far more than needed). Pick an expiry date you will remember: deploys fail once the token has expired. The token is `<DIGITALOCEAN_API_TOKEN>`; it goes into the encrypted credentials in B2.
+Other projects on the server can use the same setup, or any registry they already have.
 
 ---
 
@@ -148,14 +145,14 @@ At the company that manages the domain's DNS:
 
 | Type | Name | Value | TTL |
 |---|---|---|---|
-| A | `@` (atesoraroseta.com) | `<DROPLET_IP>` | 300 |
-| A | `www` | `<DROPLET_IP>` | 300 |
+| A | `@` (atesoraroseta.com) | `165.22.43.43` | 300 |
+| A | `www` | `165.22.43.43` | 300 |
 
 - If the domain points somewhere else today, first **lower the TTL of the existing records to 300 seconds** and wait a day, so the switch takes minutes instead of hours.
 - **Delete any AAAA (IPv6) records** that point elsewhere: Let's Encrypt tries IPv6 first and would fail.
 - If the DNS is at Cloudflare, set both records to **"DNS only"** (grey cloud).
 
-**These records must resolve to the droplet before the first deploy.** kamal-proxy asks Let's Encrypt for the certificates on the first HTTPS visit, and Let's Encrypt only issues them after checking that the names point at this server. Failed checks count against Let's Encrypt's limit of 5 failures per name per hour. Check that both answer `<DROPLET_IP>`, also from public resolvers:
+**These records must resolve to the droplet before the first deploy.** kamal-proxy asks Let's Encrypt for the certificates on the first HTTPS visit, and Let's Encrypt only issues them after checking that the names point at this server. Failed checks count against Let's Encrypt's limit of 5 failures per name per hour. Check that both answer `165.22.43.43`, also from public resolvers:
 
 ```sh
 dig +short atesoraroseta.com A
@@ -169,7 +166,7 @@ dig +short atesoraroseta.com AAAA      # should print nothing
 
 Every secret lives in **`config/credentials.yml.enc`**, an encrypted file that *is* in git. **`config/master.key`** decrypts it and is *not* in git.
 
-**Back up `config/master.key` now** in a password manager (for example as a secure note "atesoraroseta: config/master.key"; it is one line). If it is lost, nothing in the credentials can be read any more. You would have to start new credentials (`rm config/credentials.yml.enc`, then `bin/rails credentials:edit`), create a new registry token and a new Spaces key, and set the admin password again. The backups in Spaces aren't encrypted with it, so they stay usable.
+**Back up `config/master.key` now** in a password manager (for example as a secure note "atesoraroseta: config/master.key"; it is one line). If it is lost, nothing in the credentials can be read any more. You would have to start new credentials (`rm config/credentials.yml.enc`, then `bin/rails credentials:edit`), create a new Spaces key, and set the admin password again. The backups in Spaces aren't encrypted with it, so they stay usable.
 
 Open the credentials (they open decrypted in your editor and are encrypted again when you close it; `EDITOR="code --wait"` works too):
 
@@ -177,7 +174,7 @@ Open the credentials (they open decrypted in your editor and are encrypted again
 EDITOR="nano" bin/rails credentials:edit
 ```
 
-Add the `kamal` and `spaces` blocks. Keep the `secret_key_base` and `admin` entries that are already there (the admin block is written by `bin/rails admin:credentials`, see B6):
+Add the `spaces` block. Keep the `secret_key_base` and `admin` entries that are already there (the admin block is written by `bin/rails admin:credentials`, see B6):
 
 ```yaml
 secret_key_base: …already there, don't change it…
@@ -185,9 +182,6 @@ secret_key_base: …already there, don't change it…
 admin:
   email: admin@atesoraroseta.com
   password: …already there…
-
-kamal:
-  registry_password: <DIGITALOCEAN_API_TOKEN>
 
 spaces:
   access_key_id: <SPACES_ACCESS_KEY_ID>
@@ -197,8 +191,8 @@ spaces:
 Check that every key is there, without printing any value:
 
 ```sh
-bin/rails runner 'c = Rails.application.credentials; puts({ admin: c.admin&.keys, kamal: c.kamal&.keys, spaces: c.spaces&.keys }.inspect)'
-# {admin: [:email, :password], kamal: [:registry_password], spaces: [:access_key_id, :secret_access_key]}
+bin/rails runner 'c = Rails.application.credentials; puts({ admin: c.admin&.keys, spaces: c.spaces&.keys }.inspect)'
+# {admin: [:email, :password], spaces: [:access_key_id, :secret_access_key]}
 ```
 
 Then **commit `config/credentials.yml.enc`**: Kamal builds the image from your last commit, and the image carries the encrypted file.
@@ -209,7 +203,6 @@ Where each secret ends up:
 |---|---|---|
 | `config/master.key` | your Mac and your password manager; on the server, only in the app container's environment (`RAILS_MASTER_KEY`) | the app, to decrypt the credentials |
 | `admin.email`, `admin.password` | the credentials | the app: it creates or updates the admin user on every boot |
-| `kamal.registry_password` | the credentials | Kamal on your Mac (`docker push`) and on the server (`docker pull`) |
 | `spaces.access_key_id`, `spaces.secret_access_key` | the credentials | the app reads them itself (uploads backup); Kamal also passes them to the Litestream container |
 
 `.kamal/secrets` contains no secret: it only reads them from `config/master.key` and the credentials (`bin/rails credentials:fetch …`) when Kamal needs them. On the server, Kamal keeps them in env files under `~/.kamal/apps/atesoraroseta/env/` that only root can read.
@@ -243,7 +236,7 @@ bin/kamal setup
 It takes a few minutes. Kamal:
 
 1. installs Docker on the droplet if it is missing;
-2. builds the image on your Mac (for amd64) and pushes it to the registry;
+2. builds the image on your Mac (for amd64), pushes it to the local registry and has the droplet pull it over SSH (A5);
 3. starts kamal-proxy if no other project has;
 4. starts the Litestream container (`atesoraroseta-litestream`);
 5. starts the app, which prepares the databases on the first boot (the site's default texts and the admin user), and switches kamal-proxy to it as soon as `/up` answers.
@@ -401,7 +394,7 @@ Before this guide was written, both restores were rehearsed on a Mac with the pr
 
 **The certificate isn't issued** (the browser warns, or `curl https://…` fails):
 
-- `dig` (B1) must show `<DROPLET_IP>` for both names and no AAAA record.
+- `dig` (B1) must show `165.22.43.43` for both names and no AAAA record.
 - The firewall must allow ports 80 and 443 (A1).
 - `bin/kamal proxy logs | grep -i -E "acme|certificate|tls"` shows Let's Encrypt's answer. After several failures, Let's Encrypt refuses for an hour; fix DNS, wait, and visit the site again.
 
@@ -411,7 +404,7 @@ Before this guide was written, both restores were rehearsed on a Mac with the pr
 
 - `bin/kamal app logs --lines 200` shows why the new version didn't boot. The old one keeps serving.
 - `ActiveSupport::MessageEncryptor::InvalidMessage`: `config/master.key` doesn't match `config/credentials.yml.enc` (B2).
-- Registry login errors: the token has expired or lacks registry access (A5). Try `bin/kamal registry login`.
+- The droplet can't pull the image: the local registry isn't running (A5). Docker Desktop must be running, and `docker ps` on your Mac must show `kamal-docker-registry`; `bin/kamal registry setup` starts it again.
 - "kamal-proxy version … is too old": see A4.
 
 **Disk space:**
@@ -424,7 +417,7 @@ Before this guide was written, both restores were rehearsed on a Mac with the pr
 
 - Docker Desktop must be running (`open -a Docker`, then `docker info`).
 - "exec format error", or very slow builds: turn on **Use Rosetta for x86_64/amd64 emulation** in Docker Desktop's settings.
-- If builds are still too slow, Kamal can build on the droplet itself, natively: add `remote: ssh://root@<DROPLET_IP>` under `builder:` in `config/deploy.yml`. It is faster, but every build then takes CPU, memory and disk from the server your other projects share; that is why it is off.
+- If builds are still too slow, Kamal can build on the droplet itself, natively: add `remote: ssh://root@165.22.43.43` under `builder:` in `config/deploy.yml`. It is faster, but every build then takes CPU, memory and disk from the server your other projects share; that is why it is off.
 
 **Backups:**
 
@@ -438,23 +431,23 @@ Before this guide was written, both restores were rehearsed on a Mac with the pr
 
 ## Part C: adding another project to the server
 
-Each new project is its own Kamal app, in its own folder, deployed to the same `<DROPLET_IP>`. It needs:
+Each new project is its own Kamal app, in its own folder, deployed to the same `165.22.43.43`. It needs:
 
 - a **unique service name** (it also names its containers);
 - its **own volume**, named after the service, if it stores anything;
 - its **own domain(s)** in `proxy.hosts`, with DNS pointing at the droplet;
-- its own registry repository (mind the registry plan, A5) and, for backups, its own Spaces bucket and key;
+- for backups, its own Spaces bucket and key (no registry is needed, A5);
 - **no published ports** and **no `proxy:` → `run:` section**.
 
 A minimal `config/deploy.yml`:
 
 ```yaml
 service: otro-proyecto
-image: <REGISTRY_NAME>/otro-proyecto
+image: otro-proyecto
 
 servers:
   web:
-    - <DROPLET_IP>
+    - 165.22.43.43
 
 proxy:
   ssl: true
@@ -466,10 +459,7 @@ proxy:
     path: /up               # any path that answers 200 when the app is ready
 
 registry:
-  server: registry.digitalocean.com
-  username: <DIGITALOCEAN_EMAIL>
-  password:
-    - KAMAL_REGISTRY_PASSWORD
+  server: localhost:5555
 
 volumes:
   - "otro-proyecto_storage:/data"

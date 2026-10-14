@@ -13,13 +13,13 @@
 # Name of the application. Used to uniquely configure containers.
 service: atesoraroseta
 
-# The image's repository in DigitalOcean Container Registry (Kamal puts registry.digitalocean.com/ in front).
-image: <REGISTRY_NAME>/atesoraroseta
+# The image's name (Kamal puts the local registry, localhost:5555/, in front; see registry below).
+image: atesoraroseta
 
-# The droplet.
+# The droplet, shared with other projects.
 servers:
   web:
-    - <DROPLET_IP>
+    - 165.22.43.43
 
 # kamal-proxy: HTTPS on both names with Let's Encrypt certificates (www.atesoraroseta.com answers with a
 # 301 to atesoraroseta.com, see lib/www_redirect.rb). These options apply to this app only.
@@ -40,13 +40,11 @@ proxy:
     # app and gets its Spanish "pesa más de 25 MB" error; anything larger can never be a valid image here.
     max_request_body: 31457280
 
-# Where the images go. The username is the DigitalOcean account's email; the password is an API token with
-# read and write access to the registry, kept in the encrypted credentials (kamal.registry_password).
+# No external registry: Kamal runs a registry container on this Mac (127.0.0.1:5555), pushes the image to it,
+# and the droplet pulls it through the deploy's SSH connection. There is no account or token, and nothing to
+# clean up in a registry. The droplet keeps the last few images for rollbacks (retain_containers below).
 registry:
-  server: registry.digitalocean.com
-  username: <DIGITALOCEAN_EMAIL>
-  password:
-    - KAMAL_REGISTRY_PASSWORD
+  server: localhost:5555
 
 # The backups bucket: this project's own private Spaces bucket. The app (BackupUploadsJob) and the
 # Litestream accessory both read these; the access keys are secrets (see .kamal/secrets).

@@ -5,10 +5,7 @@ require "kamal"
 # change that breaks the configuration or a rule of the shared droplet fails here. Nothing connects to a
 # server and no secret is read: the commands are only built.
 class KamalConfigTest < ActiveSupport::TestCase
-  DUMMY_VALUES = {
-    "<DROPLET_IP>" => "203.0.113.10", "<REGISTRY_NAME>" => "example-registry",
-    "<DIGITALOCEAN_EMAIL>" => "deploy@example.com", "<SPACES_BUCKET>" => "example-bucket", "<SPACES_REGION>" => "ams3"
-  }.freeze
+  DUMMY_VALUES = { "<SPACES_BUCKET>" => "example-bucket", "<SPACES_REGION>" => "ams3" }.freeze
 
   setup do
     @dir = Dir.mktmpdir("kamal-config")
@@ -23,7 +20,8 @@ class KamalConfigTest < ActiveSupport::TestCase
 
   test "the app has its own names, image and volume" do
     assert_equal "atesoraroseta", @config.service
-    assert_match %r{\Aregistry\.digitalocean\.com/[^/<>]+/atesoraroseta\z}, @config.repository
+    assert @config.registry.local?, "the image goes through Kamal's local registry, not an external one"
+    assert_equal "localhost:5555/atesoraroseta", @config.repository
     assert_equal 1, @config.all_hosts.size
     assert_equal [ "--volume", "atesoraroseta_storage:/rails/storage" ], @config.volume_args
   end
@@ -75,7 +73,7 @@ class KamalConfigTest < ActiveSupport::TestCase
   test ".kamal/secrets only reads the master key and the encrypted credentials" do
     assignments = Rails.root.join(".kamal/secrets").readlines(chomp: true).grep_v(/\A\s*(#|\z)/)
 
-    assert_equal %w[RAILS_MASTER_KEY KAMAL_REGISTRY_PASSWORD SPACES_ACCESS_KEY_ID SPACES_SECRET_ACCESS_KEY],
+    assert_equal %w[RAILS_MASTER_KEY SPACES_ACCESS_KEY_ID SPACES_SECRET_ACCESS_KEY],
       assignments.map { |line| line.split("=", 2).first }
     assignments.each do |line|
       assert_match(/\A[A-Z_]+=\$\((cat config\/master\.key|bin\/rails credentials:fetch [a-z_.]+)\)\z/, line)
