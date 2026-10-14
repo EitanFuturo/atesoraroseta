@@ -1,0 +1,21 @@
+<% page_meta title: site.nav_about_label, description: site.about_lead, canonical: about_url %>
+<main class="main-about">
+  <div class="about">
+    <% if site.portrait.attached? %>
+      <figure class="about-portrait">
+        <%= responsive_image_tag ResponsiveImage.new(site.portrait), sizes: portrait_sizes, alt: site.portrait_alt_text,
+              loading: :eager, fetchpriority: :high, class: "about-portrait-img" %>
+      </figure>
+    <% end %>
+    <div class="about-text">
+      <h1 class="label page-label"><%= site.nav_about_label %></h1>
+      <% if site.about_lead.present? %>
+        <p class="about-lead"><%= site.about_lead %></p>
+      <% end %>
+      <% if site.about_body.present? %>
+        <div class="about-body rich-text"><%= public_rich_text site.about_body %></div>
+      <% end %>
+      <%= link_to site.about_contact_link_label, contact_path, class: "text-link standalone-link" %>
+    </div>
+  </div>
+</main>

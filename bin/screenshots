@@ -1,0 +1,144 @@
+#!/usr/bin/env ruby
+# Full-page screenshots of the public pages, or of the design canvas's reference renders, at exact widths.
+#
+#   bin/screenshots --base http://localhost:3003 [--reference] [--widths 1440,768,390,320] [--reduced-motion]
+#                   [--touch] [--hover CSS] [--tab N] [--run NAME] [pages…]
+#
+#   pages     obra, obra-detalle, torn-posters, sobre-mi, contacto and 404 (all by default; the reference has
+#             no 404), or any path starting with "/"
+#   --reference      shoot design/canvas/reference/*.html instead of the app, to compare side by side
+#   --reduced-motion emulate prefers-reduced-motion: reduce
+#   --touch          emulate a touch screen, so (hover: none) matches
+#   --hover CSS      hover the first element matching CSS before shooting (for example ".work")
+#   --tab N          press Tab N times before shooting (keyboard focus)
+#   --run NAME       the output folder's name (default: a timestamp plus "app" or "reference")
+#
+# PNGs go to tmp/page-screenshots/<run>/<page>-<width>.png. (Not tmp/screenshots: that folder belongs to the
+# system tests' failure screenshots, and Rails' tmp:clear, which bin/setup runs, fails on folders inside it.)
+# Widths are exact: CDP's Emulation.setDeviceMetricsOverride (a headless window can't be narrower than ~500px), and
+# the viewport grows to the page's full height so lazy images load before Page.captureScreenshot. Any page that
+# scrolls sideways (scrollWidth > clientWidth) is printed. Needs the selenium-webdriver gem (test group) and Chrome.
+require "bundler/setup"
+require "base64"
+require "fileutils"
+require "optparse"
+require "selenium-webdriver"
+
+ROOT = File.expand_path("..", __dir__)
+
+# name => [ app path, reference file ]
+PAGES = {
+  "obra" => [ "/", "Main.html" ],
+  "obra-detalle" => [ "/obra/obra-de-muestra-01", "Obra-detalle.html" ],
+  "torn-posters" => [ "/torn-posters", "Torn-posters.html" ],
+  "sobre-mi" => [ "/sobre-mi", "Sobre-mi.html" ],
+  "contacto" => [ "/contacto", "Contacto.html" ],
+  # errors#not_found in the site's layout: the static file server answers /404 (and /404/) with
+  # public/404.html, but not /404.xhtml, which Rails reads as HTML.
+  "404" => [ "/404.xhtml", nil ]
+}.freeze
+
+options = { base: "http://localhost:3003", widths: [ 1440, 768, 390, 320 ], reference: false, reduced_motion: false,
+            touch: false, hover: nil, tab: 0, run: nil }
+
+OptionParser.new do |parser|
+  parser.banner = "Usage: bin/screenshots [options] [pages…]"
+  parser.on("--base URL", "The app's address (default #{options[:base]})") { |value| options[:base] = value.chomp("/") }
+  parser.on("--widths LIST", Array, "Viewport widths (default 1440,768,390,320)") { |list| options[:widths] = list.map { Integer(_1) } }
+  parser.on("--reference", "Shoot design/canvas/reference instead of the app") { options[:reference] = true }
+  parser.on("--reduced-motion", "Emulate prefers-reduced-motion: reduce") { options[:reduced_motion] = true }
+  parser.on("--touch", "Emulate a touch screen (hover: none)") { options[:touch] = true }
+  parser.on("--hover CSS", "Hover the first element matching CSS") { |value| options[:hover] = value }
+  parser.on("--tab N", Integer, "Press Tab N times") { |value| options[:tab] = value }
+  parser.on("--run NAME", "Output folder name under tmp/page-screenshots") { |value| options[:run] = value }
+end.parse!
+
+names = ARGV.empty? ? PAGES.keys : ARGV
+names -= [ "404" ] if options[:reference] && ARGV.empty?
+
+targets = names.map do |name|
+  if name.start_with?("/")
+    [ name.delete_prefix("/").tr("/", "_").then { _1.empty? ? "root" : _1 }, options[:base] + name ]
+  elsif !PAGES.key?(name)
+    abort "Unknown page #{name.inspect}: use #{PAGES.keys.join(", ")} or a path starting with /"
+  elsif options[:reference]
+    file = PAGES.fetch(name).last or abort("The reference has no #{name} page")
+    [ name, "file://#{File.join(ROOT, "design/canvas/reference", file)}" ]
+  else
+    [ name, options[:base] + PAGES.fetch(name).first ]
+  end
+end
+
+run = options[:run] || "#{Time.now.strftime("%Y%m%d-%H%M%S")}-#{options[:reference] ? "reference" : "app"}"
+out_dir = File.join(ROOT, "tmp/page-screenshots", run)
+FileUtils.mkdir_p(out_dir)
+
+chrome_options = Selenium::WebDriver::Chrome::Options.new(
+  args: %w[--headless=new --hide-scrollbars --force-device-scale-factor=1 --window-size=1440,1000 --disable-gpu]
+)
+driver = Selenium::WebDriver.for(:chrome, options: chrome_options)
+
+def wait_until(timeout: 15)
+  deadline = Time.now + timeout
+  until yield
+    return false if Time.now > deadline
+    sleep 0.1
+  end
+  true
+end
+
+def settle(driver)
+  wait_until { driver.execute_script("return document.readyState") == "complete" }
+  wait_until { driver.execute_script("return document.fonts.status") == "loaded" }
+  wait_until { driver.execute_script("return Array.from(document.images).every((image) => image.complete)") }
+end
+
+def set_viewport(driver, width, height)
+  driver.execute_cdp("Emulation.setDeviceMetricsOverride", width: width, height: height, deviceScaleFactor: 1, mobile: false)
+end
+
+begin
+  if options[:reduced_motion]
+    driver.execute_cdp("Emulation.setEmulatedMedia", features: [ { name: "prefers-reduced-motion", value: "reduce" } ])
+  end
+  driver.execute_cdp("Emulation.setTouchEmulationEnabled", enabled: true, maxTouchPoints: 5) if options[:touch]
+
+  targets.each do |name, url|
+    options[:widths].each do |width|
+      set_viewport(driver, width, 1000)
+      driver.navigate.to(url)
+      settle(driver)
+
+      # Grow the viewport to the whole page, so every lazy image is in view and loads, then measure again.
+      2.times do
+        height = driver.execute_script("return Math.ceil(document.documentElement.scrollHeight)")
+        set_viewport(driver, width, height)
+        settle(driver)
+      end
+
+      if options[:hover]
+        element = driver.find_element(css: options[:hover])
+        driver.action.move_to(element).perform
+      end
+      options[:tab].times { driver.action.send_keys(:tab).perform }
+      sleep 1.2 if options[:hover] || options[:tab].positive? # let the 700ms transitions finish
+
+      metrics = driver.execute_script(<<~JS)
+        const root = document.documentElement;
+        return { scrollWidth: root.scrollWidth, clientWidth: root.clientWidth,
+                 hoverNone: matchMedia("(hover: none)").matches, reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches };
+      JS
+      if metrics["scrollWidth"] > metrics["clientWidth"]
+        puts "SCROLLS SIDEWAYS: #{name} at #{width}px (scrollWidth #{metrics["scrollWidth"]} > clientWidth #{metrics["clientWidth"]})"
+      end
+
+      shot = driver.execute_cdp("Page.captureScreenshot", format: "png", captureBeyondViewport: true, fromSurface: true)
+      path = File.join(out_dir, "#{name}-#{width}.png")
+      File.binwrite(path, Base64.decode64(shot.fetch("data")))
+      flags = [ ("hover: none" if metrics["hoverNone"]), ("reduced motion" if metrics["reducedMotion"]) ].compact
+      puts "#{path.delete_prefix("#{ROOT}/")}#{" (#{flags.join(", ")})" if flags.any?}"
+    end
+  end
+ensure
+  driver&.quit
+end

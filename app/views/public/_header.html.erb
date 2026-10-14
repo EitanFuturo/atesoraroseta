@@ -1,0 +1,10 @@
+<header class="site-header">
+  <%= link_to site.wordmark, root_path, class: "wordmark" %>
+  <nav aria-label="<%= t("public.nav.main") %>">
+    <ul class="nav-list">
+      <% main_menu_items.each do |label, path, section| %>
+        <li><%= link_to label, path, class: "nav-link", aria: { current: ("page" if section == current_section) } %></li>
+      <% end %>
+    </ul>
+  </nav>
+</header>

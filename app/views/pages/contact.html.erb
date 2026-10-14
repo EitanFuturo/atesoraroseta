@@ -1,0 +1,20 @@
+<% page_meta title: site.nav_contact_label, description: site.seo_description, canonical: contact_url %>
+<main class="main-contact">
+  <div class="contact">
+    <h1 class="label page-label"><%= site.nav_contact_label %></h1>
+    <% if site.contact_headline.present? %>
+      <p class="contact-headline"><%= site.contact_headline %></p>
+    <% end %>
+    <% if site.email.present? %>
+      <%= mail_to site.email, site.email, class: "text-link contact-email" %>
+    <% end %>
+    <% if site.instagram_handle.present? %>
+      <div class="contact-links">
+        <div class="contact-link-group">
+          <span class="label"><%= site.instagram_label %></span>
+          <%= link_to site.instagram_at_handle, site.instagram_url, class: "text-link contact-handle" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</main>

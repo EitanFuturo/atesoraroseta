@@ -1,0 +1,83 @@
+<% hero = ResponsiveImage.new(@artwork.image) %>
+<% details = @artwork.details %>
+<% previous_work = @artwork.previous %>
+<% next_work = @artwork.next %>
+<% data = [
+     [ site.year_label, @artwork.years_label ],
+     [ site.medium_label, @artwork.medium, "artwork-medium" ],
+     [ site.dimensions_label, @artwork.dimensions ]
+   ].select { |_label, value| value.present? } %>
+<% page_meta title: @artwork.title, description: @artwork.meta_description, canonical: artwork_url(@artwork),
+             og_image: @artwork.image.variant(:og), og_image_alt: @artwork.alt_text %>
+<main class="main-artwork">
+  <% if @preview %>
+    <p class="preview-notice"><%= t("public.preview_notice") %></p>
+  <% end %>
+  <a class="quiet-link back-link" href="<%= root_path %>">
+    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 7H1.5M6 2.5 1.5 7 6 11.5"></path></svg>
+    <span><%= site.nav_work_label %></span>
+  </a>
+
+  <section class="artwork-hero" aria-labelledby="titulo-obra">
+    <div class="artwork-media">
+      <%= responsive_image_tag hero, sizes: artwork_hero_sizes(hero), alt: @artwork.alt_text, loading: :eager,
+            fetchpriority: :high, class: "artwork-img" %>
+    </div>
+    <div class="artwork-text">
+      <h1 id="titulo-obra" class="artwork-title"><%= @artwork.title %></h1>
+      <% if data.any? %>
+        <dl class="artwork-data">
+          <% data.each do |label, value, value_class| %>
+            <div class="artwork-data-row">
+              <dt class="label"><%= label %></dt>
+              <%= tag.dd value, class: value_class %>
+            </div>
+          <% end %>
+        </dl>
+      <% end %>
+      <% if @artwork.description.present? %>
+        <div class="artwork-description rich-text"><%= public_rich_text @artwork.description %></div>
+      <% end %>
+      <% if details.any? %>
+        <a class="text-link details-link" href="#detalles"><%= site.view_details_text(details.size) %></a>
+      <% end %>
+    </div>
+  </section>
+
+  <% if details.any? %>
+    <section id="detalles" class="details" aria-labelledby="titulo-detalles">
+      <h2 id="titulo-detalles" class="label details-title"><%= site.details_label %></h2>
+      <div class="details-columns">
+        <% sizes = detail_sizes %>
+        <% details.each do |detail| %>
+          <figure class="detail">
+            <%= responsive_image_tag ResponsiveImage.new(detail.image), sizes: sizes, alt: detail.alt_text, class: "detail-img" %>
+          </figure>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+
+  <% if previous_work || next_work %>
+    <nav class="pager" aria-label="<%= t("public.nav.other_works") %>">
+      <% if previous_work %>
+        <a class="quiet-link pager-link" href="<%= artwork_path(previous_work) %>">
+          <span class="pager-label">
+            <svg aria-hidden="true" width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M13 7H1.5M6 2.5 1.5 7 6 11.5"></path></svg>
+            <span><%= site.previous_label %></span>
+          </span>
+          <span class="pager-title"><%= previous_work.title %></span>
+        </a>
+      <% end %>
+      <% if next_work %>
+        <a class="quiet-link pager-link pager-next" href="<%= artwork_path(next_work) %>">
+          <span class="pager-label">
+            <span><%= site.next_label %></span>
+            <svg aria-hidden="true" width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M1 7h11.5M8 2.5 12.5 7 8 11.5"></path></svg>
+          </span>
+          <span class="pager-title"><%= next_work.title %></span>
+        </a>
+      <% end %>
+    </nav>
+  <% end %>
+</main>

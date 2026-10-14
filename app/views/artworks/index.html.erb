@@ -1,0 +1,13 @@
+<% page_meta title: site.nav_work_label, description: site.seo_description, canonical: root_url %>
+<main class="main-obra">
+  <h1 class="visually-hidden"><%= site.nav_work_label %></h1>
+  <% if @artworks.present? %>
+    <div class="work-grid">
+      <% @artworks.each_with_index do |artwork, index| %>
+        <%= render "artworks/tile", artwork: artwork,
+              loading: grid_loading(index, eager: ResponsiveImagesHelper::OBRA_EAGER_TILES),
+              fetchpriority: (:high if index.zero?) %>
+      <% end %>
+    </div>
+  <% end %>
+</main>
