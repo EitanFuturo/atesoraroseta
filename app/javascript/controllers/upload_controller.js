@@ -6,7 +6,7 @@ import { Controller } from "@hotwired/stimulus"
 // a message), keeps the rest and lists them. When the form is sent, Active Storage uploads each file in its
 // own request; this shows each file's progress on its line. The server checks everything again.
 //
-//   <div data-controller="upload" data-upload-max-bytes-value="26214400"
+//   <div data-controller="upload" data-upload-max-bytes-value="52428800"
 //        data-upload-accept-value="image/jpeg,image/png,image/webp" data-upload-messages-value="{…}"
 //        data-action="direct-upload:initialize->upload#register direct-upload:start->upload#start
 //                     direct-upload:progress->upload#progress direct-upload:error->upload#error

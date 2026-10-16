@@ -67,7 +67,7 @@ module Admin
       ImageAttachments.accept
     end
 
-    # "JPEG, PNG o WebP, hasta 25 MB."
+    # "JPEG, PNG o WebP, hasta 50 MB."
     def admin_image_formats_hint
       t("admin.images.formats", formats: ImageAttachments.format_names, max_megabytes: ImageAttachments::MAX_BYTES / 1.megabyte)
     end

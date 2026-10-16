@@ -39,11 +39,13 @@ proxy:
   # the container gets the same limit (HTTP_WRITE_TIMEOUT below); its default, 30, would cut it short.
   response_timeout: 60
   buffering:
-    # 30 MiB. The largest request is a direct upload: one image of at most 25 MiB
+    # 55 MiB. The largest request is a direct upload: one image of at most 50 MiB
     # (ImageAttachments::MAX_BYTES) sent as the raw request body. The other 5 MiB cover the multipart
-    # envelope and fields of a form that carries one such file. A file of 25 to 30 MiB still reaches the
-    # app and gets its Spanish "pesa más de 25 MB" error; anything larger can never be a valid image here.
-    max_request_body: 31457280
+    # envelope and fields of a form that carries one such file. A file of 50 to 55 MiB still reaches the
+    # app and gets its Spanish "pesa más de 50 MB" error; anything larger can never be a valid image here.
+    # The proxy holds the first 1 MiB of a body in memory and the rest in a file, and response_timeout
+    # only starts once the whole body has arrived, so a slow connection can take as long as it needs.
+    max_request_body: 57671680
 
 # No external registry: Kamal runs a registry container on this Mac (127.0.0.1:5555), pushes the image to it,
 # and the droplet pulls it through the deploy's SSH connection. There is no account or token, and nothing to

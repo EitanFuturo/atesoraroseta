@@ -66,14 +66,14 @@ class Admin::ArtworksTest < AdminSystemTestCase
     assert_equal 0, page.evaluate_script("document.getElementById('artwork_image').files.length")
   end
 
-  test "a file over 25 MB is refused before uploading" do
+  test "a file over 50 MB is refused before uploading" do
     path = renamed_fixture_file("small.png", "enorme.png")
-    File.truncate(path, 26.megabytes)
+    File.truncate(path, 51.megabytes)
     visit new_admin_artwork_path
 
     attach_file "Imagen", path, make_visible: true
 
-    assert_selector ".upload-errors", text: "«enorme.png» pesa 26 MB y el máximo es 25 MB: no se subirá."
+    assert_selector ".upload-errors", text: "«enorme.png» pesa 51 MB y el máximo es 50 MB: no se subirá."
     assert_equal 0, page.evaluate_script("document.getElementById('artwork_image').files.length")
   end
 

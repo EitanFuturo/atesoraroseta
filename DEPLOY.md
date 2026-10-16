@@ -476,7 +476,7 @@ Before this guide was written, both restores were rehearsed on a Mac with the pr
 - Litestream logs `AccessDenied` or `InvalidAccessKeyId`: the Spaces key is wrong, or doesn't have Read/Write/Delete on this bucket (B3).
 - After changing the Spaces keys in the credentials: commit `config/credentials.yml.enc`, run `bin/kamal deploy` (the app reads them from the image), then `bin/kamal accessory reboot litestream` (Litestream gets them when it boots).
 
-**Uploads:** the app accepts images up to 25 MB. The proxy refuses any request over 30 MiB.
+**Uploads:** the app accepts images up to 50 MB. The proxy refuses any request over 55 MiB.
 
 ---
 

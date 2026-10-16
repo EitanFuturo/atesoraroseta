@@ -143,7 +143,7 @@ class Admin::ArtworksControllerTest < ActionDispatch::IntegrationTest
 
     assert_select ".file-picker input[type=file].file-picker__input#artwork_image"
     assert_select ".file-picker .file-picker__button[aria-hidden=true]", "Elegir archivo"
-    assert_select "#artwork_image_hint", "Elige un archivo: JPEG, PNG o WebP, hasta 25 MB."
+    assert_select "#artwork_image_hint", "Elige un archivo: JPEG, PNG o WebP, hasta 50 MB."
   end
 
   test "a slug filled from the title gets -2 when it is taken" do

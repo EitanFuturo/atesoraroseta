@@ -66,12 +66,12 @@ class ImageAttachmentsTest < ActiveSupport::TestCase
     assert_equal [ "Imagen tiene un formato no admitido (usa JPEG, PNG o WebP)" ], artwork.errors.full_messages
   end
 
-  test "rejects images over 25 MB" do
-    assert new_artwork(blob_without_file(content_type: "image/jpeg", byte_size: 25.megabytes)).valid?
+  test "rejects images over 50 MB" do
+    assert new_artwork(blob_without_file(content_type: "image/jpeg", byte_size: 50.megabytes)).valid?
 
-    artwork = new_artwork(blob_without_file(content_type: "image/jpeg", byte_size: 25.megabytes + 1))
+    artwork = new_artwork(blob_without_file(content_type: "image/jpeg", byte_size: 50.megabytes + 1))
     assert_not artwork.valid?
-    assert_equal [ "Imagen pesa más de 25 MB" ], artwork.errors.full_messages
+    assert_equal [ "Imagen pesa más de 50 MB" ], artwork.errors.full_messages
   end
 
   test "accepts AVIF only when libvips can read it" do

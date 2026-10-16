@@ -6,14 +6,14 @@
 #   end
 #
 # image_attachment declares has_one_attached with the variants of ImageVariants and adds:
-# - validation of new uploads: JPEG, PNG or WebP (and AVIF when this libvips can read it), up to 25 MB;
+# - validation of new uploads: JPEG, PNG or WebP (and AVIF when this libvips can read it), up to 50 MB;
 # - analysis right after the record commits, so width and height exist before the first render;
 # - <name>_width, <name>_height, <name>_aspect_ratio and <name>_low_resolution? (long side under 1600 px:
 #   a warning for the admin, not a validation error).
 module ImageAttachments
   extend ActiveSupport::Concern
 
-  MAX_BYTES = 25.megabytes
+  MAX_BYTES = 50.megabytes
   LOW_RESOLUTION_LONG_SIDE = 1600
 
   CONTENT_TYPES = { "image/jpeg" => "JPEG", "image/png" => "PNG", "image/webp" => "WebP" }.freeze
