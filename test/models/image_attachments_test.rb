@@ -21,6 +21,29 @@ class ImageAttachmentsTest < ActiveSupport::TestCase
     Vips::Image.new_from_buffer(variant.processed.download, "")
   end
 
+  # A JPEG stored 1500×1000 with EXIF orientation 6 (turn 90° clockwise to view), as cameras save photos
+  # taken upright: it shows 1000×1500. Its stored top rows are red and the rest blue, so upright its right
+  # edge is red.
+  def sideways_photo
+    stored = Vips::Image.black(1500, 1000, bands: 3).new_from_image([ 40, 60, 160 ])
+    stored = stored.insert(stored.new_from_image([ 200, 30, 30 ]).crop(0, 0, 1500, 200), 0, 0)
+    stored = stored.copy(interpretation: :srgb).mutate { |image| image.set_type!(GObject::GINT_TYPE, "orientation", 6) }
+    { io: StringIO.new(stored.jpegsave_buffer), filename: "de-lado.jpg", content_type: "image/jpeg" }
+  end
+
+  # How many times image_processing decodes a whole image (its load_image) while the block runs.
+  def count_full_decodes
+    processor = ImageProcessing::Vips::Processor.singleton_class
+    count = 0
+    processor.alias_method :load_image_uncounted, :load_image
+    processor.define_method(:load_image) { |*args, **options| count += 1; load_image_uncounted(*args, **options) }
+    yield
+    count
+  ensure
+    processor.alias_method :load_image, :load_image_uncounted
+    processor.remove_method :load_image_uncounted
+  end
+
   # Validation
 
   test "accepts JPEG, PNG and WebP uploads" do
@@ -275,5 +298,44 @@ class ImageAttachmentsTest < ActiveSupport::TestCase
     image = vips_image(artworks(:collage).image.variant(:thumb))
 
     assert_equal [ 240, 320 ], [ image.width, image.height ]
+  end
+
+  test "variants of a photo saved sideways come out upright" do
+    artwork = Artwork.create!(title: "De lado", image: sideways_photo)
+    assert_equal [ 1000, 1500 ], [ artwork.image_width, artwork.image_height ], "analysed upright"
+    poster = TornPoster.create!(image: sideways_photo)
+    site = sites(:main)
+    site.update!(portrait: sideways_photo, favicon: sideways_photo)
+
+    { [ artwork.image, :width_600 ] => [ 600, 900 ], [ artwork.image, :width_1200 ] => [ 1000, 1500 ],
+      [ artwork.image, :thumb ] => [ 213, 320 ], [ poster.image, :square_600 ] => [ 600, 600 ],
+      [ poster.image, :square_1200 ] => [ 1000, 1000 ], [ site.portrait, :portrait_600 ] => [ 600, 750 ],
+      [ site.portrait, :portrait_1200 ] => [ 1000, 1250 ], [ site.favicon, :favicon_180 ] => [ 180, 180 ] }.each do |(attachment, name), size|
+      image = vips_image(attachment.variant(name))
+      assert_equal size, [ image.width, image.height ], name
+      assert_operator image.getpoint(image.width - 3, image.height / 2)[0], :>, 150, "#{name}: red on the right"
+      assert_operator image.getpoint(3, image.height / 2)[0], :<, 100, "#{name}: blue on the left"
+    end
+
+    # The photo is 420×630 in the middle of the og image (x 390 to 809).
+    og = vips_image(artwork.image.variant(:og))
+    assert_equal [ 1200, 630 ], [ og.width, og.height ]
+    assert_operator og.getpoint(800, 315)[0], :>, 150, "og: red on the right"
+    assert_operator og.getpoint(400, 315)[0], :<, 100, "og: blue on the left"
+  end
+
+  test "variants resize as they load, never decoding the whole upload" do
+    artwork = Artwork.create!(title: "Recortada", image: fixture_attachable("obra-01.webp"))
+    poster = TornPoster.create!(image: fixture_attachable("small.png"))
+    site = sites(:main)
+    site.update!(portrait: sideways_photo, favicon: fixture_attachable("obra-01-d5.jpg"))
+
+    decodes = count_full_decodes do
+      [ artwork.image.variant(:width_600), artwork.image.variant(:og), artwork.image.variant(:thumb),
+        poster.image.variant(:square_600), poster.image.variant(:square_1200), site.portrait.variant(:portrait_600),
+        site.portrait.variant(:portrait_1200), site.favicon.variant(:favicon_32) ].each(&:processed)
+    end
+
+    assert_equal 0, decodes
   end
 end
