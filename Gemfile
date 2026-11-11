@@ -41,7 +41,7 @@ gem "image_processing", "~> 2.2"
 gem "ruby-vips", "~> 2.3"
 
 # Rich text editor for Action Text, saving real <p> paragraphs [https://lexxy.dev]
-gem "lexxy", "~> 1.0.1"
+gem "lexxy", "~> 1.0.4"
 
 # Ordering of artworks, details and torn posters [https://github.com/brendon/acts_as_list]
 gem "acts_as_list"
